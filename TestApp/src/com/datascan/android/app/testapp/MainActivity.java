@@ -91,6 +91,10 @@ public class MainActivity extends Activity {
 	        	doDecodeTest = true;
 	        	passDecodeTest =false;
 	    	}
+	        if(resultCode == RESULT_FAIL){
+	        	doDecodeTest = false;
+	        	passDecodeTest =false;
+	    	}
 	    }
 	    if(requestCode == SNAPSHOT_TEST_REQUEST){
 	    	if (resultCode == RESULT_OK) { //passed the test
