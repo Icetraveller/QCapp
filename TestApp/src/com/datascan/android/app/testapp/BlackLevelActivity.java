@@ -4,8 +4,10 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources.NotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -38,7 +40,7 @@ public class BlackLevelActivity extends Activity {
 			.makeLogTag(BlackLevelActivity.class);
 
 	private boolean exiting;
-	
+
 	private String exitState;
 
 	// Key code
@@ -62,7 +64,7 @@ public class BlackLevelActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_decode);
+		setContentView(R.layout.activity_blacklevel);
 		findUI();
 		setTitle(R.string.title_blacklevel);
 		resetState();
@@ -78,6 +80,19 @@ public class BlackLevelActivity extends Activity {
 
 	private void showHint() {
 		setDisplayTextView(getString(R.string.hint_black_level));
+		try {
+			Bitmap bmSnap = BitmapFactory.decodeResource(getResources(), R.drawable.hint_blacklevel);
+			bmSnap = Bitmap.createScaledBitmap(bmSnap, 320,254, false);
+			if (bmSnap == null) {
+				return;
+			}
+			previewImageView.setImageBitmap(bmSnap);
+			previewImageView.setVisibility(View.VISIBLE);
+		} catch (NotFoundException e) {
+			previewImageView.setImageBitmap(null);
+			previewImageView.setVisibility(View.INVISIBLE);
+		}
+
 	}
 
 	@Override
@@ -156,6 +171,8 @@ public class BlackLevelActivity extends Activity {
 
 	public void showPreview(byte[] abData) {
 		Bitmap bmSnap = BitmapFactory.decodeByteArray(abData, 0, abData.length);
+		Log.e(TAG,"" +previewImageView.getWidth()+" "+
+				previewImageView.getHeight());
 		bmSnap = Bitmap.createScaledBitmap(bmSnap, previewImageView.getWidth(),
 				previewImageView.getHeight(), false);
 		if (bmSnap == null) {
@@ -205,6 +222,7 @@ public class BlackLevelActivity extends Activity {
 			}
 		});
 	}
+
 	private int[] loadCounter(byte[] abData) {
 		Counter counter = new Counter(abData);
 		counter.count();
@@ -249,9 +267,8 @@ public class BlackLevelActivity extends Activity {
 						Thread.sleep(PREPARE_TIME);
 						runOnUiThread(new Runnable() {
 							public void run() {
-								displayTextView
-										.setText(exitState + ", next test coming in "
-												+ num);
+								displayTextView.setText(exitState
+										+ ", next test coming in " + num);
 							}
 						});
 					} catch (InterruptedException e) {
