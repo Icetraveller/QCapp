@@ -25,6 +25,8 @@ public class MainActivity extends Activity {
 	private static int SNAPSHOT_TEST_REQUEST = 1;
 	
 	public static final int RESULT_RETRY = -100;
+	public static final int RESULT_FAIL = -101;
+	public static final String FAIL_REASON = "fail_reason";
 	
 	private TextView resultTextView;
 
@@ -89,6 +91,10 @@ public class MainActivity extends Activity {
 	        	doDecodeTest = true;
 	        	passDecodeTest =false;
 	    	}
+	        if(resultCode == RESULT_FAIL){
+	        	doDecodeTest = false;
+	        	passDecodeTest =false;
+	    	}
 	    }
 	    if(requestCode == SNAPSHOT_TEST_REQUEST){
 	    	if (resultCode == RESULT_OK) { //passed the test
@@ -102,6 +108,11 @@ public class MainActivity extends Activity {
 	    	if(resultCode == RESULT_RETRY){//request retry
 	    		doSnapshotTest = true;
 	    		passSnapshotTest =false;
+	    	}
+	    	if(resultCode == RESULT_FAIL){
+	    		doSnapshotTest = false;
+	    		passSnapshotTest =false;
+	    		String reasonString = data.getStringExtra(FAIL_REASON); // update fail reason
 	    	}
 	    }
 	}

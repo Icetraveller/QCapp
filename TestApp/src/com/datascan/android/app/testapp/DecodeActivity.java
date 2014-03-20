@@ -152,7 +152,7 @@ public class DecodeActivity extends Activity {
 				new Thread(new Runnable(){
 					@Override
 					public void run() {
-						int count = 5;
+						int count = 3;
 						exiting = true;
 						while (count > 0) {
 							count--;

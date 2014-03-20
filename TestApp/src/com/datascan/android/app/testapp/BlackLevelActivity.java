@@ -3,8 +3,11 @@ package com.datascan.android.app.testapp;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.content.res.Resources.NotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -38,38 +41,32 @@ public class BlackLevelActivity extends Activity {
 
 	private boolean exiting;
 
+	private String exitState;
+
 	// Key code
 	private static final int KEY_BOTTOM_SCAN = 190;
 	private static final int KEY_TOP_SCAN = 191;
 
-	private ArrayList<int[]> array;
-
 	private ScanHelper scanHelper;
 
 	private boolean doSnapshotFlag;
-	private int snapshotCount = 1;
-	private static int REQUIRED_SNAPSHOTS = 2;
 	private static final int PREPARE_TIME = 1000;
 
 	private boolean retryFlag;
-	private Thread processThread;
 
 	private void resetState() {
 		exiting = false;
 		retryFlag = false;
 		doSnapshotFlag = true;
-		snapshotCount = 1;
-		if (processThread != null)
-			processThread.interrupt();
+		exitState = "";
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_decode);
+		setContentView(R.layout.activity_blacklevel);
 		findUI();
 		setTitle(R.string.title_blacklevel);
-		array = new ArrayList<int[]>();
 		resetState();
 	}
 
@@ -77,8 +74,25 @@ public class BlackLevelActivity extends Activity {
 	public void onResume() {
 		super.onResume();
 		scanHelper = new ScanHelper(this);
-		// start process
-		process();
+		// show tutorial
+		showHint();
+	}
+
+	private void showHint() {
+		setDisplayTextView(getString(R.string.hint_black_level));
+		try {
+			Bitmap bmSnap = BitmapFactory.decodeResource(getResources(), R.drawable.hint_blacklevel);
+			bmSnap = Bitmap.createScaledBitmap(bmSnap, 320,254, false);
+			if (bmSnap == null) {
+				return;
+			}
+			previewImageView.setImageBitmap(bmSnap);
+			previewImageView.setVisibility(View.VISIBLE);
+		} catch (NotFoundException e) {
+			previewImageView.setImageBitmap(null);
+			previewImageView.setVisibility(View.INVISIBLE);
+		}
+
 	}
 
 	@Override
@@ -89,61 +103,27 @@ public class BlackLevelActivity extends Activity {
 		}
 	}
 
-	private void process() {
-		retryFlag = false;
-		processThread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				while (snapshotCount <= REQUIRED_SNAPSHOTS) {
-					if (doSnapshotFlag) {
-						Log.e(TAG, "process");
-						interval();
-						scanHelper.doSnap();
-						snapshotCount++;
-						doSnapshotFlag = false;
-					}
-				}
-				while (true) {
-					if (doSnapshotFlag) {
-						Log.e(TAG, "anaylize");
-						anaylize();
-						break;
-					}
-				}
-			}
-		});
-		processThread.start();
-	}
-
-	private void anaylize() {
+	private void analyze(int[] data) {
 		boolean testResult = true;
-		int[] bits = new int[8];
-		int length = array.size();
-		if (length <= 0) {
-			testResult = false;
-			return;
-		}
-		int[] tempBits;
-		for (int i = 0; i < length; i++) {
-			tempBits = array.get(i);
-			for (int j = 0; j < 8; j++) {
-				bits[j] += tempBits[j];
-			}
-		}
-		for (int word : bits) {
-			if (word == 0) {
-				Log.e("counter", "one bit is zero.");
+		StringBuilder sb = new StringBuilder();
+		for (int j = 4; j < 8; j++) {
+			if (data[j] == 752 * 480) {
 				testResult = false;
+				sb.append(j).append(" ");
 			}
-			Log.d("counter", "" + word);
 		}
 		if (testResult) {
 			setDisplayTextView("Passed");
+			exitState = getString(R.string.passed);
 			setResult(RESULT_OK);
 			finish();
 		} else {
 			setDisplayTextView("Failed");
-			setResult(RESULT_CANCELED);
+			exitState = getString(R.string.failed);
+			Intent i = new Intent();
+			sb.insert(0, "failed bits: ");
+			i.putExtra(MainActivity.FAIL_REASON, sb.toString());
+			setResult(MainActivity.RESULT_FAIL, i);
 			runOnUiThread(new Runnable() {
 				public void run() {
 					showRetryButton();
@@ -189,27 +169,10 @@ public class BlackLevelActivity extends Activity {
 		displayTextView = (TextView) findViewById(R.id.display_textview);
 	}
 
-	private void interval() {
-		int count = 3;
-		while (count > 0) {
-			count--;
-			final int num = count;
-			try {
-				Thread.sleep(PREPARE_TIME);
-				setPreivewView(null);
-				setDisplayTextView("take picture[" + snapshotCount + "] in: "
-						+ num);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				break;
-			}
-		}
-		advancedHint();
-	}
-
 	public void showPreview(byte[] abData) {
 		Bitmap bmSnap = BitmapFactory.decodeByteArray(abData, 0, abData.length);
+		Log.e(TAG,"" +previewImageView.getWidth()+" "+
+				previewImageView.getHeight());
 		bmSnap = Bitmap.createScaledBitmap(bmSnap, previewImageView.getWidth(),
 				previewImageView.getHeight(), false);
 		if (bmSnap == null) {
@@ -222,12 +185,11 @@ public class BlackLevelActivity extends Activity {
 			public void run() {
 				setPreivewView(bitmapImage);
 				setDisplayTextView(getString(R.string.processing));
-				array.add(loadCounter(data));
+				analyze(loadCounter(data));
 				Log.e(TAG, "showPreview good");
-				doSnapshotFlag = true;
 			}
 		}).start();
-	} 
+	}
 
 	public void finish() {
 		if (retryFlag) {
@@ -242,6 +204,7 @@ public class BlackLevelActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				setResult(RESULT_CANCELED);
+				exitState = getString(R.string.skip);
 				showRetryButton();
 				onFinish();
 			}
@@ -254,18 +217,10 @@ public class BlackLevelActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				retryFlag = true;
+				exitState = getString(R.string.retry);
 				finish();
 			}
 		});
-	}
-
-	private String setupBitsOutputString(int index, int bit) {
-		String prefix = "Bit[" + index + "]: ";
-		if (bit == 752 * 480 || bit == 0) {
-			return prefix + "Fail";
-		} else {
-			return prefix + bit;
-		}
 	}
 
 	private int[] loadCounter(byte[] abData) {
@@ -279,7 +234,10 @@ public class BlackLevelActivity extends Activity {
 		switch (keyCode) {
 		case KEY_TOP_SCAN:
 		case KEY_BOTTOM_SCAN:
-			if (!doSnapshotFlag) {
+			if (doSnapshotFlag) { // first time scan
+				scanHelper.doSnap();
+				advancedHint();
+			} else { // scan stuck, try manual restart
 				scanHelper.restart();
 				scanHelper.doSnap();
 			}
@@ -289,17 +247,18 @@ public class BlackLevelActivity extends Activity {
 	}
 
 	private void advancedHint() {
-		String originalString = displayTextView.getText().toString();
 		String addHint = getString(R.string.hint_snapshot_advanced);
-		setDisplayTextView(originalString + "\n" + addHint);
+		setDisplayTextView(addHint);
 
 	}
 
 	public void onFinish() {
+		if (exiting)
+			return;
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				int count = 5;
+				int count = 3;
 				exiting = true;
 				while (count > 0) {
 					count--;
@@ -308,9 +267,8 @@ public class BlackLevelActivity extends Activity {
 						Thread.sleep(PREPARE_TIME);
 						runOnUiThread(new Runnable() {
 							public void run() {
-								displayTextView
-										.setText("Failed, next test coming in "
-												+ num);
+								displayTextView.setText(exitState
+										+ ", next test coming in " + num);
 							}
 						});
 					} catch (InterruptedException e) {
