@@ -11,7 +11,6 @@
     
     <string name="skip">Skip</string>
     <string name="retry">Retry</string>
-    
     <string name="passed">Passed</string>
     <string name="failed">Failed</string>
     <string name="processing">Processing</string>
@@ -25,8 +24,8 @@
     
     <string name="hint_scan">Press <xliff:g id="key" example="bottom_scan_key">%1$s</xliff:g> to scan.</string>
 
-    <string name="hint_snapshot_advanced">If no pictures shown below, press scan button to take pictures manually.</string>
-    
+    <string name="hint_snapshot_advanced">If no pictures shown below after 10 seconds, press scan button to take pictures manually.</string>
+    <string name="hint_black_level">Use your hand to block scan engine and scan black</string>
     <!-- RTC test -->
     <string name="action_settings">Settings</string>
     <string name="CurrentTime">Current Date/Time: </string>
