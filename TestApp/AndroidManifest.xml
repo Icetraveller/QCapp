@@ -28,6 +28,8 @@
     <uses-permission android:name="android.permission.DEVICE_POWER" tools:ignore="ProtectedPermissions"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>  
 
     <application
         android:allowBackup="true"
@@ -56,6 +58,15 @@
         <activity
             android:name=".RTCActivity"
             android:label="@string/title_rtc"/>
+        
+        <receiver android:name="com.datascan.android.app.testapp.util.BootReceiver"
+                      android:enabled="true"
+                      android:exported="true">
+                <intent-filter>
+                    <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                    <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
+                </intent-filter>
+            </receiver>
     </application>
 
 </manifest>

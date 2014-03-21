@@ -1,7 +1,5 @@
 package com.datascan.android.app.testapp.util;
 
-import java.io.File;
-import java.io.FileOutputStream;
 
 import com.datascan.android.app.testapp.*;
 import com.motorolasolutions.adc.decoder.BarCodeReader;
