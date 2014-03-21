@@ -18,8 +18,12 @@ public class MainActivity extends Activity {
 	private boolean doSnapshotTest = true;
 	private boolean passSnapshotTest = false;
 	
+	private boolean doRTCTest = true;
+	private boolean passRTCTest = false;
+	
 	private static int DECODE_TEST_REQUEST = 0;
 	private static int SNAPSHOT_TEST_REQUEST = 1;
+	private static int RTC_TEST_REQUEST = 2;
 	
 	public static final int RESULT_RETRY = -100;
 	public static final int RESULT_FAIL = -101;
@@ -33,6 +37,7 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		resultTextView = (TextView) findViewById(R.id.result);
+		//load saves from sd card TODO
 	} 
 
 	@Override
@@ -62,6 +67,10 @@ public class MainActivity extends Activity {
 	}
 	
 	
+	/**
+	 * Test process will pick a test from top list until it's mark skipped or failed.
+	 * When rtc is reached, all reports and status should be save on sd card.
+	 */
 	public void testProcess(){
 		if(doDecodeTest){
 			Intent intent = new Intent(this, DecodeActivity.class);
@@ -70,6 +79,11 @@ public class MainActivity extends Activity {
 		else if(doSnapshotTest){
 			Intent intent = new Intent(this, BlackLevelActivity.class);
 			startActivityForResult(intent, SNAPSHOT_TEST_REQUEST);
+		}
+		else if(doRTCTest){
+			//save file TODO
+			Intent intent = new Intent(this, RTCActivity.class);
+			startActivityForResult(intent, RTC_TEST_REQUEST);
 		}
 	}
 	
