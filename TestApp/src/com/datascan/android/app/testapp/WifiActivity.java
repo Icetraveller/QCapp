@@ -1,13 +1,22 @@
 package com.datascan.android.app.testapp;
 
+import com.datascan.android.app.testapp.util.WifiScanReceiver;
+
 import android.app.Activity;
+import android.content.IntentFilter;
 import android.os.Bundle;
 
 public class WifiActivity extends Activity{
+	
+	private WifiScanReceiver wifiScanReceiver;
+	
+	private boolean retryFlag = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
+		wifiScanReceiver = new WifiScanReceiver();
+		registerReceiver(wifiScanReceiver, new IntentFilter("android.net.wifi.SCAN_RESULTS"));
 	}
 	
 	@Override
@@ -17,6 +26,15 @@ public class WifiActivity extends Activity{
 	
 	protected void onPause(){
 		
+	}
+	
+	public void finish() {
+		if (retryFlag) {
+			setResult(MainActivity.RESULT_RETRY);
+		}
+		
+		unregisterReceiver(wifiScanReceiver);
+		super.finish();
 	}
 	
 	/**

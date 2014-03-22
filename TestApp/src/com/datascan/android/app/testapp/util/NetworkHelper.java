@@ -1,21 +1,9 @@
 package com.datascan.android.app.testapp.util;
 
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.HashMap;
-import java.util.List;
-
 import android.bluetooth.BluetoothAdapter;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.wifi.ScanResult;
-import android.net.wifi.WifiConfiguration;
-import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 
@@ -30,8 +18,12 @@ public class NetworkHelper {
 	private BluetoothAdapter bluetoothAdapter;
 	private Context context;
 
-	private static final String TAG = "NetworkHelper";
+	private static final String TAG = LogUtil.makeLogTag(NetworkHelper.class);
 
+	/**
+	 * The contructor will init the system serivce of wifi and bluetooth
+	 * @param context
+	 */
 	public NetworkHelper(Context context) {
 		this.context = context;
 		getWiFiManager();
