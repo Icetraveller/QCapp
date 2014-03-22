@@ -5,8 +5,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import com.datascan.android.app.testapp.util.readTimeFile;
-import com.datascan.android.app.testapp.util.writeTimeFile;
+import com.datascan.android.app.testapp.util.RTCTool;
 
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -43,11 +42,9 @@ public class RTCActivity extends Activity {
 			// date/time comparison
 			long currentTime = rightNow.getTimeInMillis();
 
-			writeTimeFile fileWrite = new writeTimeFile();
-			fileWrite.writeTime(currentTime);
-
-			readTimeFile dateAndTime = new readTimeFile();
-			String checkFileContents = dateAndTime.readTime();
+			RTCTool rtcTool = new RTCTool();
+			rtcTool.writeTime(currentTime);
+			String checkFileContents = rtcTool.readTime();
 
 			// Displays a message if timeFile.txt is empty. There should always
 			// be something in that file if its present
@@ -77,8 +74,8 @@ public class RTCActivity extends Activity {
 			TextView tv2 = (TextView) findViewById(R.id.textView2);
 			TextView tv3 = (TextView) findViewById(R.id.textView3);
 
-			readTimeFile dateAndTime = new readTimeFile();
-			String dateAndTime1 = dateAndTime.readTime();
+			RTCTool rtcTool = new RTCTool();
+			String dateAndTime1 = rtcTool.readTime();
 
 			long readDateAndTime = Long.valueOf(dateAndTime1).longValue();
 
@@ -112,8 +109,8 @@ public class RTCActivity extends Activity {
 		addListenerOnButton();
 
 		TextView tv3 = (TextView) findViewById(R.id.textView3);
-		readTimeFile dateAndTime = new readTimeFile();
-		String checkFileContents = dateAndTime.readTime();
+		RTCTool rtcTool = new RTCTool();
+		String checkFileContents = rtcTool.readTime();
 
 		File timeFile = new File("/sdcard/timeFile.txt");
 

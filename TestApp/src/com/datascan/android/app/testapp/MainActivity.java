@@ -3,12 +3,9 @@ package com.datascan.android.app.testapp;
 import com.datascan.android.app.testapp.util.LogUtil;
 
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
@@ -21,8 +18,12 @@ public class MainActivity extends Activity {
 	private boolean doSnapshotTest = true;
 	private boolean passSnapshotTest = false;
 	
+	private boolean doRTCTest = true;
+	private boolean passRTCTest = false;
+	
 	private static int DECODE_TEST_REQUEST = 0;
 	private static int SNAPSHOT_TEST_REQUEST = 1;
+	private static int RTC_TEST_REQUEST = 2;
 	
 	public static final int RESULT_RETRY = -100;
 	public static final int RESULT_FAIL = -101;
@@ -36,6 +37,7 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		resultTextView = (TextView) findViewById(R.id.result);
+		//load saves from sd card TODO
 	} 
 
 	@Override
@@ -65,6 +67,10 @@ public class MainActivity extends Activity {
 	}
 	
 	
+	/**
+	 * Test process will pick a test from top list until it's mark skipped or failed.
+	 * When rtc is reached, all reports and status should be save on sd card.
+	 */
 	public void testProcess(){
 		if(doDecodeTest){
 			Intent intent = new Intent(this, DecodeActivity.class);
@@ -73,6 +79,11 @@ public class MainActivity extends Activity {
 		else if(doSnapshotTest){
 			Intent intent = new Intent(this, BlackLevelActivity.class);
 			startActivityForResult(intent, SNAPSHOT_TEST_REQUEST);
+		}
+		else if(doRTCTest){
+			//save file TODO
+			Intent intent = new Intent(this, RTCActivity.class);
+			startActivityForResult(intent, RTC_TEST_REQUEST);
 		}
 	}
 	
@@ -113,6 +124,24 @@ public class MainActivity extends Activity {
 	    		doSnapshotTest = false;
 	    		passSnapshotTest =false;
 	    		String reasonString = data.getStringExtra(FAIL_REASON); // update fail reason
+	    	}
+	    }
+	    if(requestCode == RTC_TEST_REQUEST){
+	    	if (resultCode == RESULT_OK) { //passed the test
+	    		doRTCTest = false;
+	    		passRTCTest = true;
+	        }
+	    	if(resultCode == RESULT_CANCELED){ //failed the test
+	    		doRTCTest = false;
+	    		passRTCTest =false;
+	        }
+	    	if(resultCode == RESULT_RETRY){//request retry
+	    		doRTCTest = true;
+	    		passRTCTest =false;
+	    	}
+	    	if(resultCode == RESULT_FAIL){
+	    		doRTCTest = false;
+	    		passRTCTest =false;
 	    	}
 	    }
 	}
