@@ -126,6 +126,24 @@ public class MainActivity extends Activity {
 	    		String reasonString = data.getStringExtra(FAIL_REASON); // update fail reason
 	    	}
 	    }
+	    if(requestCode == RTC_TEST_REQUEST){
+	    	if (resultCode == RESULT_OK) { //passed the test
+	    		doRTCTest = false;
+	    		passRTCTest = true;
+	        }
+	    	if(resultCode == RESULT_CANCELED){ //failed the test
+	    		doRTCTest = false;
+	    		passRTCTest =false;
+	        }
+	    	if(resultCode == RESULT_RETRY){//request retry
+	    		doRTCTest = true;
+	    		passRTCTest =false;
+	    	}
+	    	if(resultCode == RESULT_FAIL){
+	    		doRTCTest = false;
+	    		passRTCTest =false;
+	    	}
+	    }
 	}
 	
 }
