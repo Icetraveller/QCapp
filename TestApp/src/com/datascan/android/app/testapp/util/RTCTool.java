@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import android.util.Log;
+
 public class RTCTool {
 
 	public String readTime() {
@@ -50,16 +52,17 @@ public class RTCTool {
 		File timeFile = new File("/sdcard/timeFile.txt");
 
 		if (!timeFile.exists()) {
+			Log.e("RTC","create time file");
 			try {
 				timeFile.createNewFile();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Log.e("RTC",e.getMessage());
 			}
 		}
 
 		try {
-
+			Log.e("RTC","write time file");
 			FileWriter logWriter = new FileWriter(timeFile);
 			BufferedWriter outer = new BufferedWriter(logWriter);
 			// FileOutputStream fos = new FileOutputStream(timeFile);
@@ -75,7 +78,13 @@ public class RTCTool {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-
+	}
+	
+	public static void deleteTimeFile(){
+		File timeFile = new File("/sdcard/timeFile.txt");
+		if (!timeFile.exists()) {
+			timeFile.delete();
+		}
 	}
 
 }

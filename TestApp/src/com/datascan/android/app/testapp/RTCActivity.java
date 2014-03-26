@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import com.datascan.android.app.testapp.util.PreferenceHelper;
 import com.datascan.android.app.testapp.util.RTCTool;
 
 import android.app.AlertDialog;
@@ -15,6 +16,7 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -22,7 +24,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class RTCActivity extends Activity {
-
+	
 	void dateAndTime() {
 		File timeFile = new File("/sdcard/timeFile.txt");
 
@@ -89,6 +91,9 @@ public class RTCActivity extends Activity {
 
 				tv2.setText(String.valueOf(formattedDate3));
 				tv3.setText("RTC TEST FAILED");
+				setResult(MainActivity.RESULT_FAIL);
+				deleteTimeFile();
+				finish();
 			} else {
 				SimpleDateFormat df3 = new SimpleDateFormat(
 						"dd-MM-yyyy HH:mm:ss a");
@@ -96,10 +101,17 @@ public class RTCActivity extends Activity {
 
 				tv2.setText(String.valueOf(formattedDate3));
 				tv3.setText("RTC TEST PASSED");
+				setResult(MainActivity.RESULT_OK);
+				deleteTimeFile();
+				finish();
 			}
 
 		}
-
+	}
+	
+	private void deleteTimeFile(){
+		RTCTool rtcTool = new RTCTool();
+		rtcTool.deleteTimeFile();
 	}
 
 	@Override
@@ -107,7 +119,7 @@ public class RTCActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_rtc);
 		addListenerOnButton();
-
+Log.e("RTC","RTC, here I am");
 		TextView tv3 = (TextView) findViewById(R.id.textView3);
 		RTCTool rtcTool = new RTCTool();
 		String checkFileContents = rtcTool.readTime();
@@ -166,10 +178,12 @@ public class RTCActivity extends Activity {
 	// Method for sleeping the scanner
 	void sleepScanner() {
 		try {
+			Boolean booa = PreferenceHelper.isTesting(this);
+			Log.e("wow","i'm heere "+ booa);
 			PowerManager pwrMgr = (PowerManager) getSystemService(Context.POWER_SERVICE);
 			pwrMgr.goToSleep(10000000);
 		} catch (Exception ex) {
-
+			Log.e("wow",ex.getMessage().toString());
 		}
 	}
 

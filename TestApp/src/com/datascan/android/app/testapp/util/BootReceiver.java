@@ -13,9 +13,10 @@ public class BootReceiver extends BroadcastReceiver{
 	public void onReceive(Context context, Intent intent) {
 		boolean active = PreferenceHelper.isTesting(context);
 		Log.e(TAG,"In Test is "+active);
-		if(!active){
+		if(active){
 			Intent mainIntent = new Intent(context.getApplicationContext(), MainActivity.class);
-			mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); 
+			mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); 
+			context.startActivity(mainIntent);
 		}
 		
 	}
