@@ -77,9 +77,7 @@ public class NetworkHelper {
 		return mWifi.isConnected();
 	}
 
-	public void connectToWifi() {
-		if (isWifiConnected())
-			return;
+	public void startScanWifi() {
 		wifiManager.startScan();
 		Log.d(TAG, "Scanning");
 	}
