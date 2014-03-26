@@ -132,38 +132,39 @@ public class MainActivity extends Activity {
 	 * card.
 	 */
 	public void testProcess() {
-		//for test only
-		if (doTest.get(LIGHT_TEST_REQUEST)) {
+		// for test only
+		// if (doTest.get(ACCELEROMETER_TEST_REQUEST)) {
+		// Intent intent = new Intent(this, AccelerometerActivity.class);
+		// startActivityForResult(intent, ACCELEROMETER_TEST_REQUEST);
+		// }
+		Log.e(TAG, "" + PreferenceHelper.isTesting(this));
+		if (doTest.get(DECODE_TEST_REQUEST)) {
+			Intent intent = new Intent(this, DecodeActivity.class);
+			startActivityForResult(intent, DECODE_TEST_REQUEST);
+		} else if (doTest.get(BLACKLEVEL_TEST_REQUEST)) {
+			Intent intent = new Intent(this, BlackLevelActivity.class);
+			startActivityForResult(intent, BLACKLEVEL_TEST_REQUEST);
+		} else if (doTest.get(WIFI_TEST_REQUEST)) {
+			Intent intent = new Intent(this, WifiActivity.class);
+			startActivityForResult(intent, WIFI_TEST_REQUEST);
+		} else if (doTest.get(LED_TEST_REQUEST)) {
+			Intent intent = new Intent(this, LEDActivity.class);
+			startActivityForResult(intent, LED_TEST_REQUEST);
+		} else if (doTest.get(ACCELEROMETER_TEST_REQUEST)) {
+			Intent intent = new Intent(this, AccelerometerActivity.class);
+			startActivityForResult(intent, ACCELEROMETER_TEST_REQUEST);
+		} else if (doTest.get(LIGHT_TEST_REQUEST)) {
 			Intent intent = new Intent(this, LightActivity.class);
 			startActivityForResult(intent, LIGHT_TEST_REQUEST);
+		} else if (doTest.get(RTC_TEST_REQUEST)) {
+			// save file TODO
+			Log.e(TAG, "save");
+			String report = resultTextView.getText().toString();
+			SaveHelper.save(report, doTest, passTest);
+			PreferenceHelper.setTesting(this, true);
+			Intent intent = new Intent(this, RTCActivity.class);
+			startActivityForResult(intent, RTC_TEST_REQUEST);
 		}
-		// Log.e(TAG, "" + PreferenceHelper.isTesting(this));
-		// if (doTest.get(DECODE_TEST_REQUEST)) {
-		// Intent intent = new Intent(this, DecodeActivity.class);
-		// startActivityForResult(intent, DECODE_TEST_REQUEST);
-		// } else if (doTest.get(BLACKLEVEL_TEST_REQUEST)) {
-		// Intent intent = new Intent(this, BlackLevelActivity.class);
-		// startActivityForResult(intent, BLACKLEVEL_TEST_REQUEST);
-		// } else if (doTest.get(WIFI_TEST_REQUEST)) {
-		// Intent intent = new Intent(this, WifiActivity.class);
-		// startActivityForResult(intent, WIFI_TEST_REQUEST);
-		// } else if (doTest.get(LED_TEST_REQUEST)) {
-		// Intent intent = new Intent(this, LEDActivity.class);
-		// startActivityForResult(intent, LED_TEST_REQUEST);
-		// } else if (doTest.get(ACCELEROMETER_TEST_REQUEST)) {
-		//
-		// } else if (doTest.get(LIGHT_TEST_REQUEST)) {
-		// Intent intent = new Intent(this, LightActivity.class);
-		// startActivityForResult(intent, LIGHT_TEST_REQUEST);
-		// } else if (doTest.get(RTC_TEST_REQUEST)) {
-		// // save file TODO
-		// Log.e(TAG, "save");
-		// String report = resultTextView.getText().toString();
-		// SaveHelper.save(report, doTest, passTest);
-		// PreferenceHelper.setTesting(this, true);
-		// Intent intent = new Intent(this, RTCActivity.class);
-		// startActivityForResult(intent, RTC_TEST_REQUEST);
-		// }
 	}
 
 	@Override

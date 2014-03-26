@@ -29,7 +29,7 @@
     <string name="description_snapshot">Snapshot</string>
     
     <string name="hint_scan">Press <xliff:g id="key" example="bottom_scan_key">%1$s</xliff:g> to scan.</string>
-    
+    <string name="hint_accelerometer">Change the orientation of the scanner.\n The test should pass automatically, otherwise press fail button to continue.</string>
     <string name="hint_led">Press Pass button if LED is flashing, otherwise, press fail button.</string>
     <string name="hint_light">Please place scanner in a bright environment.</string>
 

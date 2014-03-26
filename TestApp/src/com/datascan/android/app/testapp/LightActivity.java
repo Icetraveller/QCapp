@@ -78,15 +78,13 @@ public class LightActivity extends Activity {
 	private void init() {
 		sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 		lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
-
+		//sensor is not available
+				if (lightSensor == null) {
+					setResult(MainActivity.RESULT_FAIL);
+					finish();
+				}
 		sensorManager.registerListener(lightSensorEventListener, lightSensor,
 				SensorManager.SENSOR_DELAY_NORMAL);
-
-		//sensor is not available
-		if (lightSensor == null) {
-			setResult(MainActivity.RESULT_FAIL);
-			finish();
-		}
 	}
 
 	private void hint() {
