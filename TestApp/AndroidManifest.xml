@@ -1,7 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.datascan.android.app.testapp"
     android:versionCode="1"
-    android:versionName="1.0" xmlns:tools="http://schemas.android.com/tools">
+    android:versionName="1.0" >
 
     <uses-sdk
         android:minSdkVersion="16"
@@ -21,15 +22,14 @@
     </uses-permission>
     <uses-permission android:name="android.permission.READ_PHONE_STATE" >
     </uses-permission>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" >
-    </uses-permission>
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.DEVICE_POWER" tools:ignore="ProtectedPermissions"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>  
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission
+        android:name="android.permission.DEVICE_POWER"
+        tools:ignore="ProtectedPermissions" />
 
     <application
         android:allowBackup="true"
@@ -54,19 +54,35 @@
             android:name=".BlackLevelActivity"
             android:label="@string/title_blacklevel" >
         </activity>
-        
+        <activity
+            android:name=".WifiActivity"
+            android:label="@string/title_wifi" >
+        </activity>
+        <activity
+            android:name=".LEDActivity"
+            android:label="@string/title_led" >
+        </activity>
+        <activity
+            android:name=".AccelerometerActivity"
+            android:label="@string/title_accelerometer" >
+        </activity>
+        <activity
+            android:name=".LightActivity"
+            android:label="@string/title_light" >
+        </activity>
         <activity
             android:name=".RTCActivity"
-            android:label="@string/title_rtc"/>
-        
-        <receiver android:name="com.datascan.android.app.testapp.util.BootReceiver"
-                      android:enabled="true"
-                      android:exported="true">
-                <intent-filter>
-                    <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                    <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
-                </intent-filter>
-            </receiver>
+            android:label="@string/title_rtc" />
+
+        <receiver
+            android:name="com.datascan.android.app.testapp.util.BootReceiver"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

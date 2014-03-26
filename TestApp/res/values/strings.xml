@@ -5,7 +5,11 @@
     
     <string name="title_decode">ScanEngine - Decode</string>
     <string name="title_blacklevel">ScanEngine - BlackLevel</string>
-    <string name="title_rtc">RTC</string>
+    <string name="title_wifi">Wifi Test</string>
+    <string name="title_rtc">RTC Battery</string>
+    <string name="title_light">Light Sensor</string>
+    <string name="title_accelerometer">Accelerometer</string>
+    <string name="title_led">LED</string>
     
     <string name="data"></string>
     
@@ -13,6 +17,8 @@
     <string name="retry">Retry</string>
     <string name="passed">Passed</string>
     <string name="failed">Failed</string>
+    <string name="pass">Pass</string>
+    <string name="fail">Fail</string>
     <string name="processing">Processing</string>
     
     <string name="top_scan_key">Top Scan Key</string>
@@ -23,6 +29,9 @@
     <string name="description_snapshot">Snapshot</string>
     
     <string name="hint_scan">Press <xliff:g id="key" example="bottom_scan_key">%1$s</xliff:g> to scan.</string>
+    
+    <string name="hint_led">Press Pass button if LED is flashing, otherwise, press fail button.</string>
+    <string name="hint_light">Please place scanner in a bright environment.</string>
 
     <string name="hint_snapshot_advanced">If no pictures shown below after 10 seconds, press scan button to take pictures manually.</string>
     <string name="hint_black_level">Use your hand to block scan engine and scan black</string>

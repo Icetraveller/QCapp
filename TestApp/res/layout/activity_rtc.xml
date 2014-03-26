@@ -40,13 +40,33 @@
         android:textSize="20sp"
         android:textStyle="bold" />
 
+    <TableRow android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="54dp"
+        android:layout_alignParentBottom="true">
+    <Button
+        android:id="@+id/skip"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.3"
+        android:gravity="center"
+        android:text="@string/skip"  />
+
     <Button
         android:id="@+id/button1"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="54dp"
-        android:text="@string/Button1"  />
-    
+        android:layout_weight="0.3"
+        android:gravity="center"
+        android:text="@string/Button1"
+        />
+
+    <Button
+        android:id="@+id/retry"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.3"
+        android:gravity="center"
+        android:text="@string/retry"  />
+    </TableRow>
 </RelativeLayout>
