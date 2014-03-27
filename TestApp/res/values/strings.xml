@@ -19,7 +19,9 @@
     <string name="failed">Failed</string>
     <string name="pass">Pass</string>
     <string name="fail">Fail</string>
-    <string name="processing">Processing</string>
+    <string name="initializing">Initializing...</string>
+    <string name="scanning">Scanning...</string>
+    <string name="processing">Processing...</string>
     
     <string name="top_scan_key">Top Scan Key</string>
     <string name="bottom_scan_key">Bottom Scan Key</string>

@@ -3,6 +3,7 @@ package com.datascan.android.app.testapp;
 import java.util.HashMap;
 import java.util.List;
 
+import com.datascan.android.app.testapp.util.LogUtil;
 import com.datascan.android.app.testapp.util.NetworkHelper;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -18,31 +19,39 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class WifiActivity extends Activity{
-	
+public class WifiActivity extends Activity {
+
+	private static final String TAG = LogUtil.makeLogTag(WifiActivity.class);
+
 	private ImageView previewImageView;
 	private Button skipButton, retryButton;
 	private TextView displayTextView;
-	
+
 	private WifiScanReceiver wifiScanReceiver;
-	
+
 	private boolean retryFlag = false;
 	private boolean exiting;
 	private String exitState;
 	private static final int PREPARE_TIME = 1000;
 
+	private int scanTimeOut = 2 * 30;
+	private int scanTimeCount = 0;
+	private boolean getScanResult = false;
+	private boolean breakFlag = false; // stop two test threads
+
 	@Override
-	public void onCreate(Bundle savedInstanceState){
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_decode);
 		findUI();
 		setTitle(R.string.title_wifi);
-		
 		wifiScanReceiver = new WifiScanReceiver();
-		registerReceiver(wifiScanReceiver, new IntentFilter("android.net.wifi.SCAN_RESULTS"));
+		registerReceiver(wifiScanReceiver, new IntentFilter(
+				"android.net.wifi.SCAN_RESULTS"));
 	}
-	
+
 	private void findUI() {
 		previewImageView = (ImageView) findViewById(R.id.preview_imageview);
 		previewImageView.setVisibility(View.INVISIBLE);
@@ -52,7 +61,7 @@ public class WifiActivity extends Activity{
 		retryButton.setVisibility(View.INVISIBLE);
 		displayTextView = (TextView) findViewById(R.id.display_textview);
 	}
-	
+
 	private void showSkipButton() {
 		skipButton.setVisibility(View.VISIBLE);
 		skipButton.setOnClickListener(new OnClickListener() {
@@ -65,7 +74,7 @@ public class WifiActivity extends Activity{
 			}
 		});
 	}
-	
+
 	private void showRetryButton() {
 		retryButton.setVisibility(View.VISIBLE);
 		retryButton.setOnClickListener(new OnClickListener() {
@@ -77,8 +86,9 @@ public class WifiActivity extends Activity{
 			}
 		});
 	}
-	
+
 	public void onFinish() {
+		breakFlag = true;
 		if (exiting)
 			return;
 		new Thread(new Runnable() {
@@ -107,63 +117,140 @@ public class WifiActivity extends Activity{
 			}
 		}).start();
 	}
-	
+
 	@Override
-	protected void onResume(){
+	protected void onResume() {
 		super.onResume();
 		startTest();
 	}
-	
+
 	public void finish() {
 		if (retryFlag) {
 			setResult(MainActivity.RESULT_RETRY);
 		}
-		
 		unregisterReceiver(wifiScanReceiver);
 		super.finish();
 	}
-	
-	/**
-	 * Start the process of test. The test strategy is:
-	 * Scanning wifi in an environment where there are wifi access point.
-	 */
-	private void startTest(){
-		displayTextView.setText(R.string.processing);
-		NetworkHelper networkHelper = new NetworkHelper(this);
-		networkHelper.setWiFi(true);
-		networkHelper.startScanWifi();
+
+	private void updateDisplay(final int count, final String text) {
+		if (count % 2 != 0)
+			return;
+		runOnUiThread(new Runnable() {
+			public void run() {
+				displayTextView.setText(text + ", " + count / 2);
+			}
+		});
 	}
-	
-	private void getResult(boolean result){
-		if(result){
+
+	/**
+	 * Start the process of test. The test strategy is: Scanning wifi in an
+	 * environment where there are wifi access point.
+	 */
+	private void startTest() {
+		displayTextView.setText(R.string.processing);
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				int timeOut = 2 * 10;
+				int timeCount = 0;
+				NetworkHelper networkHelper = new NetworkHelper(
+						getApplicationContext());
+				int enabled = -1;
+				networkHelper.setWiFi(true);
+				Log.e(TAG, "start enable");
+				while (!breakFlag) {
+					if (timeCount >= timeOut) {// timeout
+						Log.e(TAG, "enable timeout");
+						setResult(MainActivity.RESULT_FAIL);
+						finish();
+						return;
+					}
+					Log.e(TAG, "see if enabled");
+					enabled = networkHelper.getWifiStatus();
+					if (enabled == WifiManager.WIFI_STATE_UNKNOWN) { // can't
+																		// enable
+						Log.e(TAG, "enable error");
+						setResult(MainActivity.RESULT_FAIL);
+						finish();
+						return;
+					} else if (enabled == WifiManager.WIFI_STATE_ENABLED) { // enabled
+																			// wifi
+																			// successfully
+						break;
+					}
+					try {
+						Thread.sleep(500);
+						updateDisplay(timeCount,
+								getString(R.string.initializing));
+						timeCount++;
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+						continue;
+					}
+				}
+				Log.e(TAG, "start scan");
+				networkHelper.startScanWifi();
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						while (!breakFlag) {
+							if (scanTimeCount >= scanTimeOut) { // enabled wifi,
+																// but scan
+																// timeout
+								setResult(MainActivity.RESULT_FAIL);
+								finish();
+								return;
+							}
+							if (getScanResult) { // successfully get result
+								return;
+							}
+							try {
+								updateDisplay(scanTimeCount,
+										getString(R.string.scanning));
+								Thread.sleep(500);
+								scanTimeCount++;
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+								continue;
+							}
+						}
+					}
+				}).start();
+			}
+		}).start();
+	}
+
+	private void getResult(boolean result) {
+		if (result) {
 			setResult(RESULT_OK);
 			exitState = getString(R.string.passed);
 			finish();
 			return;
-		}else{
+		} else {
 			setResult(MainActivity.RESULT_FAIL);
 			exitState = getString(R.string.failed);
 			showRetryButton();
 			onFinish();
 		}
 	}
-	
+
 	private class WifiScanReceiver extends BroadcastReceiver {
 		private WifiManager wifiManager;
 		private HashMap<String, String> wifiMap = new HashMap<String, String>();
-		
+
 		private Context context;
 		private static final String TAG = "WifiScanReceiver";
-		
+
 		public void onReceive(Context context, Intent intent) {
-			Log.e(TAG,"WIFI Scan receiver");
+			Log.e(TAG, "WIFI Scan receiver");
 			this.context = context;
+			getScanResult = true;
 			wifiManager = (WifiManager) context
 					.getSystemService(Context.WIFI_SERVICE);
 			List<ScanResult> wifiList = wifiManager.getScanResults();
-			if(wifiList==null || wifiList.size() <1){
+			if (wifiList == null || wifiList.size() < 1) {
 				getResult(false);
-			}else{
+			} else {
 				getResult(true);
 			}
 		}

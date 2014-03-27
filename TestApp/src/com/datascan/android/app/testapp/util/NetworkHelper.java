@@ -39,19 +39,20 @@ public class NetworkHelper {
 		bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 	}
 
-	public boolean getWifiStatus() {
+	public int getWifiStatus() {
 		int state = wifiManager.getWifiState();
 		switch(state){
 			case WifiManager.WIFI_STATE_DISABLED:
 			case WifiManager.WIFI_STATE_DISABLING:
-				return false;
+				return WifiManager.WIFI_STATE_DISABLING;
 			case WifiManager.WIFI_STATE_ENABLED:
+				return WifiManager.WIFI_STATE_ENABLED;
 			case WifiManager.WIFI_STATE_ENABLING:
-				return true;
+				return WifiManager.WIFI_STATE_ENABLING;
 			case WifiManager.WIFI_STATE_UNKNOWN:
 				break;
 		}
-		return false;
+		return WifiManager.WIFI_STATE_UNKNOWN;
 	}
 
 	public void setWiFi(boolean enabled) {
