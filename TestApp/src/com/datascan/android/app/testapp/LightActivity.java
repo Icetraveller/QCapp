@@ -61,7 +61,7 @@ public class LightActivity extends Activity {
 		firstRead = true;
 		setContentView(R.layout.activity_light);
 		findUI();
-		setTitle(R.string.title_led);
+		setTitle(R.string.title_light);
 	}
 
 	public void onResume() {

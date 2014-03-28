@@ -128,7 +128,11 @@ public class WifiActivity extends Activity {
 		if (retryFlag) {
 			setResult(MainActivity.RESULT_RETRY);
 		}
-		unregisterReceiver(wifiScanReceiver);
+		try {
+			unregisterReceiver(wifiScanReceiver);
+		} catch (IllegalArgumentException e) {
+			//do nothing
+		}
 		super.finish();
 	}
 

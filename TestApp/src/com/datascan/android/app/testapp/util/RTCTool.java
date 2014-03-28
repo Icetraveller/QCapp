@@ -25,7 +25,7 @@ public class RTCTool {
 
 		InputStream fileStream;
 		try {
-			fileStream = new FileInputStream("/sdcard/timeFile.txt");
+			fileStream = new FileInputStream(SaveHelper.getFile(SaveHelper.CATEGORY_TIMEFILE));
 			InputStreamReader inputreader = new InputStreamReader(fileStream);
 			BufferedReader buffreader = new BufferedReader(inputreader);
 
@@ -49,7 +49,7 @@ public class RTCTool {
 	
 	public void writeTime(long currentDateTime) {
 
-		File timeFile = new File("/sdcard/timeFile.txt");
+		File timeFile = SaveHelper.getFile(SaveHelper.CATEGORY_TIMEFILE);
 
 		if (!timeFile.exists()) {
 			Log.e("RTC","create time file");
@@ -81,7 +81,7 @@ public class RTCTool {
 	}
 	
 	public static void deleteTimeFile(){
-		File timeFile = new File("/sdcard/timeFile.txt");
+		File timeFile = SaveHelper.getFile(SaveHelper.CATEGORY_TIMEFILE);
 		if (!timeFile.exists()) {
 			timeFile.delete();
 		}

@@ -27,10 +27,15 @@ public class SaveHelper {
 	private static final String SAVEFILES_NAME = "SavedDoTest";
 	private static final String SAVEFILES2_NAME = "SavedPassTest";
 	private static final String REPORT_NAME = "report";
+	private static final String TIMEFILE_NAME = "timeFile";
+	private static final String DMSGFILE_NAME = "DMSGFile";
 
-	private static final int CATEGORY_DOTEST = 1;
-	private static final int CATEGORY_PASSTEST = 2;
-	private static final int CATEGORY_REPORT = 3;
+	public static final int CATEGORY_DOTEST = 0;
+	public static final int CATEGORY_PASSTEST = 1;
+	public static final int CATEGORY_REPORT = 2;
+	public static final int CATEGORY_TIMEFILE = 3;
+	public static final int CATEGORY_DMSGFILE = 4;
+	public static final int CATEGORY_NUM = 5;
 
 	/**
 	 * Constructor
@@ -49,16 +54,17 @@ public class SaveHelper {
 	 * @param doTest
 	 *            the flag that reflect a test is done or not.
 	 */
-	public static void save(String report, SparseBooleanArray doTestArray,SparseBooleanArray passTestArray) {
+	public static void save(String report, SparseBooleanArray doTestArray,
+			SparseBooleanArray passTestArray) {
 		if (TextUtils.isEmpty(report)) {
 			return;
 		}
 		write(CATEGORY_REPORT, report);
-		save(CATEGORY_DOTEST,doTestArray);
-		save(CATEGORY_PASSTEST,passTestArray);
+		save(CATEGORY_DOTEST, doTestArray);
+		save(CATEGORY_PASSTEST, passTestArray);
 	}
-	
-	private static void save(int category, SparseBooleanArray array){
+
+	private static void save(int category, SparseBooleanArray array) {
 		StringBuilder sb = new StringBuilder();
 		int key = 0;
 		for (int i = 0; i < array.size(); i++) {
@@ -93,6 +99,17 @@ public class SaveHelper {
 		}
 	}
 
+	public static void deleteFiles() {
+		for (int i = 0; i <= CATEGORY_NUM; i++) {
+			File f = getFile(i);
+			if (f != null){
+				if (f.exists()) {
+					f.delete();
+				}
+			}
+		}
+	}
+
 	public static File getFile(int category) {
 		File dir = new File(
 				android.os.Environment.getExternalStorageDirectory(),
@@ -110,6 +127,12 @@ public class SaveHelper {
 			break;
 		case CATEGORY_REPORT:
 			f = new File(dir + File.separator + REPORT_NAME);
+			break;
+		case CATEGORY_TIMEFILE:
+			f = new File(dir + File.separator + TIMEFILE_NAME);
+			break;
+		case CATEGORY_DMSGFILE:
+			f = new File(dir + File.separator + DMSGFILE_NAME);
 			break;
 		}
 		return f;
@@ -137,7 +160,7 @@ public class SaveHelper {
 				saves = processProgress(readBuffer(br));
 				br.close();
 				return saves;
-				
+
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -146,7 +169,7 @@ public class SaveHelper {
 		}
 		return null;
 	}
-	
+
 	public static SparseBooleanArray loadSavedPassTest() {
 		try {
 			File dir = new File(
@@ -218,7 +241,7 @@ public class SaveHelper {
 		String[] tests = text.split(" ");
 		for (String test : tests) {
 			String[] param = test.split("#");
-			if (param.length != 2){
+			if (param.length != 2) {
 				continue;
 			}
 			int key = Integer.parseInt(param[0]);

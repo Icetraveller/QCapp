@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import com.datascan.android.app.testapp.util.LogUtil;
 import com.datascan.android.app.testapp.util.PreferenceHelper;
 import com.datascan.android.app.testapp.util.RTCTool;
+import com.datascan.android.app.testapp.util.SaveHelper;
 
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -25,8 +27,10 @@ import android.widget.TextView;
 
 public class RTCActivity extends Activity {
 	
+	private static final String TAG = LogUtil.makeLogTag(DmsgActivity.class);
+	
 	void dateAndTime() {
-		File timeFile = new File("/sdcard/timeFile.txt");
+		File timeFile = SaveHelper.getFile(SaveHelper.CATEGORY_TIMEFILE);
 
 		if (!timeFile.exists()) {
 
@@ -92,7 +96,6 @@ public class RTCActivity extends Activity {
 				tv2.setText(String.valueOf(formattedDate3));
 				tv3.setText("RTC TEST FAILED");
 				setResult(MainActivity.RESULT_FAIL);
-				deleteTimeFile();
 				finish();
 			} else {
 				SimpleDateFormat df3 = new SimpleDateFormat(
@@ -102,29 +105,24 @@ public class RTCActivity extends Activity {
 				tv2.setText(String.valueOf(formattedDate3));
 				tv3.setText("RTC TEST PASSED");
 				setResult(MainActivity.RESULT_OK);
-				deleteTimeFile();
 				finish();
 			}
 
 		}
 	}
 	
-	private void deleteTimeFile(){
-		RTCTool rtcTool = new RTCTool();
-		rtcTool.deleteTimeFile();
-	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_rtc);
 		addListenerOnButton();
-Log.e("RTC","RTC, here I am");
+		Log.e(TAG, "onCreate");
 		TextView tv3 = (TextView) findViewById(R.id.textView3);
 		RTCTool rtcTool = new RTCTool();
 		String checkFileContents = rtcTool.readTime();
 
-		File timeFile = new File("/sdcard/timeFile.txt");
+		File timeFile = SaveHelper.getFile(SaveHelper.CATEGORY_TIMEFILE);
 
 		if (timeFile.exists() && checkFileContents == null) {
 			// Displays a message on the screen when something goes wrong
@@ -151,7 +149,7 @@ Log.e("RTC","RTC, here I am");
 
 			@Override
 			public void onClick(View arg0) {
-				File timeFile = new File("/sdcard/timeFile.txt");
+				File timeFile = SaveHelper.getFile(SaveHelper.CATEGORY_TIMEFILE);
 				timeFile.delete();
 				dateAndTime();
 				// Intent intent = new Intent(context, MainActivity.class);
