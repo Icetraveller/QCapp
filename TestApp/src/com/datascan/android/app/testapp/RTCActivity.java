@@ -27,7 +27,7 @@ import android.widget.TextView;
 
 public class RTCActivity extends Activity {
 	
-	private static final String TAG = LogUtil.makeLogTag(DmsgActivity.class);
+	private static final String TAG = LogUtil.makeLogTag(RTCActivity.class);
 	
 	void dateAndTime() {
 		File timeFile = SaveHelper.getFile(SaveHelper.CATEGORY_TIMEFILE);

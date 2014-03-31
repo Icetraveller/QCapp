@@ -56,9 +56,6 @@ public class SaveHelper {
 	 */
 	public static void save(String report, SparseBooleanArray doTestArray,
 			SparseBooleanArray passTestArray) {
-		if (TextUtils.isEmpty(report)) {
-			return;
-		}
 		write(CATEGORY_REPORT, report);
 		save(CATEGORY_DOTEST, doTestArray);
 		save(CATEGORY_PASSTEST, passTestArray);
@@ -89,6 +86,9 @@ public class SaveHelper {
 	private static void write(int category, String outString) {
 		try {
 			File f = getFile(category);
+			if(!f.exists()){
+				f.createNewFile();
+			}
 			FileOutputStream fOut = new FileOutputStream(f);
 			OutputStreamWriter myOutWriter = new OutputStreamWriter(fOut);
 			myOutWriter.append(outString);
