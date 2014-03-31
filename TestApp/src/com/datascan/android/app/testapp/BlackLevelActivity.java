@@ -117,6 +117,7 @@ public class BlackLevelActivity extends Activity {
 		} else {
 			setDisplayTextView("Failed");
 			exitState = getString(R.string.failed);
+			setDisplayTextView("Fail:\n failed bits:"+sb.toString());
 			Intent i = new Intent();
 			sb.insert(0, "failed bits: ");
 			i.putExtra(MainActivity.FAIL_REASON, sb.toString());

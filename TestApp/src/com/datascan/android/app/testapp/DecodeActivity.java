@@ -66,6 +66,7 @@ public class DecodeActivity extends Activity {
 	public void onPause() {
 		super.onPause();
 		if (scanHelper != null) {
+			Log.e(TAG, "close");
 			scanHelper.close();
 		}
 	}
@@ -139,18 +140,33 @@ public class DecodeActivity extends Activity {
 	}
 
 	private void checkComplete() {
-		if (!doTopScan && !doBottomScan) {
-			if (topResult && bottomResult) {
-				setResult(RESULT_OK);
-				String resultStr = getString(R.string.passed);
-				displayTextView.setText(resultStr);
-				finish();
-			} else {
-				setResult(MainActivity.RESULT_FAIL);
-				final String resultStr = getString(R.string.failed);
-				displayTextView.setText(resultStr);
-			}
+		// if (!doTopScan && !doBottomScan) {
+		// if (topResult && bottomResult) {
+		// setResult(RESULT_OK);
+		// String resultStr = getString(R.string.passed);
+		// displayTextView.setText(resultStr);
+		// finish();
+		// } else {
+		// setResult(MainActivity.RESULT_FAIL);
+		// final String resultStr = getString(R.string.failed);
+		// displayTextView.setText(resultStr);
+		// }
+
+		if (!doTopScan && !topResult) {
+			setResult(MainActivity.RESULT_FAIL);
+			final String resultStr = getString(R.string.failed);
+			displayTextView.setText(resultStr);
+		} else if (!doBottomScan && !bottomResult) {
+			setResult(MainActivity.RESULT_FAIL);
+			final String resultStr = getString(R.string.failed);
+			displayTextView.setText(resultStr);
+		} else if (!doTopScan && !doBottomScan) {
+			setResult(RESULT_OK);
+			String resultStr = getString(R.string.passed);
+			displayTextView.setText(resultStr);
+			finish();
 		}
+		// }
 	}
 
 	public void finish() {
@@ -169,8 +185,7 @@ public class DecodeActivity extends Activity {
 				finish();
 			}
 		});
-		
-		
+
 	}
 
 	private void showRetryButton() {

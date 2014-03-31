@@ -70,7 +70,7 @@ public class WifiActivity extends Activity {
 				setResult(RESULT_CANCELED);
 				exitState = getString(R.string.skip);
 				showRetryButton();
-				onFinish();
+				finish();
 			}
 		});
 	}
@@ -87,36 +87,36 @@ public class WifiActivity extends Activity {
 		});
 	}
 
-	public void onFinish() {
-		breakFlag = true;
-		if (exiting)
-			return;
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				int count = 3;
-				exiting = true;
-				while (count > 0) {
-					count--;
-					final int num = count;
-					try {
-						Thread.sleep(PREPARE_TIME);
-						runOnUiThread(new Runnable() {
-							public void run() {
-								displayTextView.setText(exitState
-										+ ", next test coming in " + num);
-							}
-						});
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						continue;
-					}
-				}
-				finish();
-			}
-		}).start();
-	}
+//	public void onFinish() {
+//		breakFlag = true;
+//		if (exiting)
+//			return;
+//		new Thread(new Runnable() {
+//			@Override
+//			public void run() {
+//				int count = 3;
+//				exiting = true;
+//				while (count > 0) {
+//					count--;
+//					final int num = count;
+//					try {
+//						Thread.sleep(PREPARE_TIME);
+//						runOnUiThread(new Runnable() {
+//							public void run() {
+//								displayTextView.setText(exitState
+//										+ ", next test coming in " + num);
+//							}
+//						});
+//					} catch (InterruptedException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//						continue;
+//					}
+//				}
+//				finish();
+//			}
+//		}).start();
+//	}
 
 	@Override
 	protected void onResume() {
@@ -145,6 +145,13 @@ public class WifiActivity extends Activity {
 			}
 		});
 	}
+	private void updateDisplay( final String text) {
+		runOnUiThread(new Runnable() {
+			public void run() {
+				displayTextView.setText(text);
+			}
+		});
+	}
 
 	/**
 	 * Start the process of test. The test strategy is: Scanning wifi in an
@@ -166,7 +173,8 @@ public class WifiActivity extends Activity {
 					if (timeCount >= timeOut) {// timeout
 						Log.e(TAG, "enable timeout");
 						setResult(MainActivity.RESULT_FAIL);
-						finish();
+						updateDisplay("Fail:\n failed to enable WIFI");
+//						finish();
 						return;
 					}
 					Log.e(TAG, "see if enabled");
@@ -175,7 +183,8 @@ public class WifiActivity extends Activity {
 																		// enable
 						Log.e(TAG, "enable error");
 						setResult(MainActivity.RESULT_FAIL);
-						finish();
+						updateDisplay("Fail:\n unknown WIFI status");
+//						finish();
 						return;
 					} else if (enabled == WifiManager.WIFI_STATE_ENABLED) { // enabled
 																			// wifi
@@ -202,7 +211,8 @@ public class WifiActivity extends Activity {
 																// but scan
 																// timeout
 								setResult(MainActivity.RESULT_FAIL);
-								finish();
+								updateDisplay("Fail:\n Timeout on getting scan result");
+//								finish();
 								return;
 							}
 							if (getScanResult) { // successfully get result
@@ -221,7 +231,7 @@ public class WifiActivity extends Activity {
 					}
 				}).start();
 			}
-		}).start();
+		}).start(); 
 	}
 
 	private void getResult(boolean result) {
@@ -234,7 +244,7 @@ public class WifiActivity extends Activity {
 			setResult(MainActivity.RESULT_FAIL);
 			exitState = getString(R.string.failed);
 			showRetryButton();
-			onFinish();
+//			onFinish();
 		}
 	}
 
