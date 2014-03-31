@@ -134,10 +134,11 @@ public class ScanHelper implements DecodeCallback, PictureCallback,
 			e.printStackTrace();
 			return false;
 		}
-		return true; 
+		return true;
 	}
 
 	public void close() {
+		Log.e(TAG, "bcr is about to close");
 		if (bcr != null) {
 			Log.e(TAG, "succeed to close");
 			bcr.release();
@@ -148,6 +149,8 @@ public class ScanHelper implements DecodeCallback, PictureCallback,
 				e.printStackTrace();
 			}
 			bcr = null;
+		}else{
+			Log.e(TAG, "bcr is null");
 		}
 	}
 
@@ -263,7 +266,7 @@ public class ScanHelper implements DecodeCallback, PictureCallback,
 	@Override
 	public void onEvent(int event, int info, byte[] data, BarCodeReader reader) {
 		// // TODO Auto-generated method stub
-		 Log.e(TAG, "event= "+event+" info= "+info);
+		// Log.e(TAG, "event= "+event+" info= "+info);
 		// if(event ==7){
 		// state = STATE_RESET;
 		// if (context instanceof DecodeActivity) {

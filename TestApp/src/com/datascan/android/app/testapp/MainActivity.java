@@ -77,7 +77,6 @@ public class MainActivity extends Activity {
 		unlockScreenAndKeepOn();
 		Log.e(TAG, "Main onResume");
 		testProcess();
-		updateResult();
 
 	}
 
@@ -111,9 +110,9 @@ public class MainActivity extends Activity {
 			key = passTest.keyAt(i);
 			// get the object by the key.
 			Boolean flag = (Boolean) passTest.get(key);
-			if(flag){
+			if (flag) {
 				sb.append("<font color='green'>");
-			}else{
+			} else {
 				sb.append("<font color='red'>");
 			}
 			String name = getTestName(key);
@@ -126,7 +125,8 @@ public class MainActivity extends Activity {
 			sb.append("</font>");
 			sb.append("<br>");
 		}
-		resultTextView.setText(Html.fromHtml(sb.toString()), TextView.BufferType.SPANNABLE);
+		resultTextView.setText(Html.fromHtml(sb.toString()),
+				TextView.BufferType.SPANNABLE);
 	}
 
 	private String getTestName(int category) {
@@ -167,22 +167,15 @@ public class MainActivity extends Activity {
 	 */
 	public void testProcess() {
 		// for test only
-		// if (doTest.get(DMSG_TEST_REQUEST)) {
-		// String report = resultTextView.getText().toString();
-		// SaveHelper.save(report, doTest, passTest);
-		// PreferenceHelper.setTesting(this, true);
-		// Intent intent = new Intent(this, DmsgActivity.class);
-		// startActivityForResult(intent, DMSG_TEST_REQUEST);
-		// }
+//		 if (doTest.get(BLACKLEVEL_TEST_REQUEST)) {
+//			 Intent intent = new Intent(this, BlackLevelActivity.class);
+//				startActivityForResult(intent, BLACKLEVEL_TEST_REQUEST);
+//		 } 
 		Log.e(TAG, "" + PreferenceHelper.isTesting(this));
 		if (doTest.get(DECODE_TEST_REQUEST)) {
 			Intent intent = new Intent(this, DecodeActivity.class);
 			startActivityForResult(intent, DECODE_TEST_REQUEST);
-		} else if (doTest.get(BLACKLEVEL_TEST_REQUEST)) {
-			Intent intent = new Intent(this, BlackLevelActivity.class);
-			startActivityForResult(intent, BLACKLEVEL_TEST_REQUEST);
-		} 
-			else if (doTest.get(LED_TEST_REQUEST)) {
+		} else if (doTest.get(LED_TEST_REQUEST)) {
 			Intent intent = new Intent(this, LEDActivity.class);
 			startActivityForResult(intent, LED_TEST_REQUEST);
 		} else if (doTest.get(ACCELEROMETER_TEST_REQUEST)) {
@@ -194,15 +187,24 @@ public class MainActivity extends Activity {
 		} else if (doTest.get(LIGHT_TEST_REQUEST)) {
 			Intent intent = new Intent(this, LightActivity.class);
 			startActivityForResult(intent, LIGHT_TEST_REQUEST);
+		} else if (doTest.get(BLACKLEVEL_TEST_REQUEST)) {
+			if (!passTest.get(DECODE_TEST_REQUEST)) {
+				doTest.put(BLACKLEVEL_TEST_REQUEST, false);
+				passTest.put(BLACKLEVEL_TEST_REQUEST, false);
+				testProcess();
+			} else {
+				Intent intent = new Intent(this, BlackLevelActivity.class);
+				startActivityForResult(intent, BLACKLEVEL_TEST_REQUEST);
+			}
 		} else if (doTest.get(RTC_TEST_REQUEST)) {
-			Log.e(TAG, "save");
+			Log.e(TAG, "rtc save");
 			String report = resultTextView.getText().toString();
 			SaveHelper.save(report, doTest, passTest);
 			PreferenceHelper.setTesting(this, true);
 			Intent intent = new Intent(this, RTCActivity.class);
 			startActivityForResult(intent, RTC_TEST_REQUEST);
 		} else if (doTest.get(DMSG_TEST_REQUEST)) {
-			Log.e(TAG, "save");
+			Log.e(TAG, " dmsg save");
 			String report = resultTextView.getText().toString();
 			SaveHelper.save(report, doTest, passTest);
 			PreferenceHelper.setTesting(this, true);
@@ -219,11 +221,7 @@ public class MainActivity extends Activity {
 			PreferenceHelper.setTesting(this, false);
 			Log.e(TAG, "quit RTC ");
 		}
-		if (requestCode == DMSG_TEST_REQUEST) {
-			PreferenceHelper.setTesting(this, false);
-			SaveHelper.deleteFiles();
-			Log.e(TAG, "quit DMSG ");
-		}
+		
 		if (resultCode == RESULT_OK) { // passed the test
 			doTest.put(requestCode, false);
 			passTest.put(requestCode, true);
@@ -242,6 +240,12 @@ public class MainActivity extends Activity {
 			if (data != null) {
 				String reasonString = data.getStringExtra(FAIL_REASON);
 			}
+		}
+		if (requestCode == DMSG_TEST_REQUEST) {
+			PreferenceHelper.setTesting(this, false);
+			SaveHelper.deleteFiles();
+			updateResult();
+			Log.e(TAG, "quit DMSG ");
 		}
 
 	}

@@ -40,6 +40,8 @@ public class BlackLevelActivity extends Activity {
 			.makeLogTag(BlackLevelActivity.class);
 
 	private String exitState;
+	
+	private boolean enablePress = true;
 
 	// Key code
 	private static final int KEY_BOTTOM_SCAN = 190;
@@ -99,7 +101,7 @@ public class BlackLevelActivity extends Activity {
 			scanHelper.close();
 		}
 	}
-
+ 
 	private void analyze(int[] data) {
 		boolean testResult = true;
 		StringBuilder sb = new StringBuilder();
@@ -232,11 +234,14 @@ public class BlackLevelActivity extends Activity {
 		case KEY_BOTTOM_SCAN:
 			setPreivewView(null);
 			if (doSnapshotFlag) { // first time scan
+				doSnapshotFlag = false;
 				scanHelper.doSnap();
 				advancedHint();
 			} else { // scan stuck, try manual restart
+				Log.e(TAG,"restart and dosnap")	;
 				scanHelper.restart();
 				scanHelper.doSnap();
+				advancedHint();
 			}
 			return false;
 		}
@@ -246,7 +251,18 @@ public class BlackLevelActivity extends Activity {
 	private void advancedHint() {
 		String addHint = getString(R.string.hint_snapshot_advanced);
 		setDisplayTextView(addHint);
+	}
+	
+	private void restartHint(){
+		new Thread(new Runnable(){
 
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				String addHint = getString(R.string.hint_snapshot_restart);
+				setDisplayTextView(addHint);
+			}});
+		
 	}
 
 
