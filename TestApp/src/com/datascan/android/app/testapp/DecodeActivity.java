@@ -83,9 +83,11 @@ public class DecodeActivity extends Activity {
 	public void scan(int keycode) {
 		currentKeyCode = keycode;
 		if (doTopScan && currentKeyCode == KEY_TOP_SCAN) {
+			displayTextView.setText(R.string.processing);
 			scanHelper.doDecode();
 		}
 		if (!doTopScan && doBottomScan && currentKeyCode == KEY_BOTTOM_SCAN) {
+			displayTextView.setText(R.string.processing);
 			scanHelper.doDecode();
 		}
 	}
@@ -144,38 +146,9 @@ public class DecodeActivity extends Activity {
 				displayTextView.setText(resultStr);
 				finish();
 			} else {
-				setResult(RESULT_CANCELED);
+				setResult(MainActivity.RESULT_FAIL);
 				final String resultStr = getString(R.string.failed);
-				if(exiting == true){
-					return;
-				}
-				new Thread(new Runnable(){
-					@Override
-					public void run() {
-						int count = 3;
-						exiting = true;
-						while (count > 0) {
-							count--;
-							final int num = count;
-							try {
-								Thread.sleep(ESCAPE_TIME);
-								runOnUiThread(new Runnable() {
-									public void run() {
-										displayTextView.setText(resultStr
-												+ ", next test coming in " + num);
-									}
-								});
-							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-								continue;
-							}
-							if (retryFlag) {
-								break;
-							}
-						}
-						finish();
-					}}).start();
+				displayTextView.setText(resultStr);
 			}
 		}
 	}
@@ -192,24 +165,12 @@ public class DecodeActivity extends Activity {
 		skipButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (doTopScan) {
-					topResult = false;
-					doTopScan = false;
-					currentKeyCode = KEY_TOP_SCAN;
-					showRetryButton();
-				} else if (doBottomScan) {
-					bottomResult = false;
-					doBottomScan = false;
-					currentKeyCode = KEY_BOTTOM_SCAN;
-					showRetryButton();
-				} else {
-					skipButton.setVisibility(View.INVISIBLE);
-				}
-
-				provideHint();
-				checkComplete();
+				setResult(RESULT_CANCELED);
+				finish();
 			}
 		});
+		
+		
 	}
 
 	private void showRetryButton() {
@@ -217,18 +178,7 @@ public class DecodeActivity extends Activity {
 		retryButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-//				if (!doBottomScan) {
-//					currentKeyCode = KEY_BOTTOM_SCAN;
-//					doBottomScan = true;
-//				} else if (!doTopScan) {
-//					currentKeyCode = KEY_TOP_SCAN;
-//					doTopScan = true;
-//				} else {
-//					retryButton.setVisibility(View.INVISIBLE);
-//				}
-//				retryFlag = true;
-//				provideHint();
-				retryFlag = true;
+				setResult(MainActivity.RESULT_RETRY);
 				finish();
 			}
 		});

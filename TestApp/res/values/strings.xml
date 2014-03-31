@@ -39,10 +39,10 @@
     <string name="hint_led">Press Pass button if LED is flashing, otherwise, press fail button.</string>
     <string name="hint_light">Please place scanner in a bright environment.</string>
 
-    <string name="hint_snapshot_advanced">If no pictures shown below after 10 seconds, press scan button to take pictures manually.</string>
+    <string name="hint_snapshot_advanced">If no black picture shown below after 2 seconds, press scan button to take picture manually.</string>
     <string name="hint_black_level">Use your hand to block scan engine and scan black</string>
     <!-- RTC test -->
-    <string name="action_settings">Retest</string>
+    <string name="action_settings">Delete Files</string>
     <string name="CurrentTime">Current Date/Time: </string>
     <string name="message">Press and hold power button, then select "Power off". Once scanner has powered off, remove batteries, wait at least 10 seconds, then place batteries back into scanner and reboot scanner. </string>
     <string name="passOrFail">Pass Or Fail: </string>

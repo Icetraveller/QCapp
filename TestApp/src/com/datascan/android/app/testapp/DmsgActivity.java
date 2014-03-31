@@ -26,7 +26,7 @@ public class DmsgActivity extends Activity {
 	
 	private static final String TAG = LogUtil.makeLogTag(DmsgActivity.class);
 
-	private static final int REBOOT_MAX = 10;
+	private static final int REBOOT_MAX = 2;
 
 	void PassOrFail() {
 		TextView t = (TextView) findViewById(R.id.tvMine);
@@ -119,12 +119,6 @@ public class DmsgActivity extends Activity {
 	}
 
  
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
 
 //$$$$$$$$$$$$$$$$$$$$ This starts after the start button has been pressed $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 	public void sendMessage(View view) {

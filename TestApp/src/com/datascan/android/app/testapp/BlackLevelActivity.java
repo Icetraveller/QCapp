@@ -39,8 +39,6 @@ public class BlackLevelActivity extends Activity {
 	private static final String TAG = LogUtil
 			.makeLogTag(BlackLevelActivity.class);
 
-	private boolean exiting;
-
 	private String exitState;
 
 	// Key code
@@ -55,7 +53,6 @@ public class BlackLevelActivity extends Activity {
 	private boolean retryFlag;
 
 	private void resetState() {
-		exiting = false;
 		retryFlag = false;
 		doSnapshotFlag = true;
 		exitState = "";
@@ -129,7 +126,6 @@ public class BlackLevelActivity extends Activity {
 					showRetryButton();
 				}
 			});
-			onFinish();
 		}
 	}
 
@@ -205,8 +201,7 @@ public class BlackLevelActivity extends Activity {
 			public void onClick(View v) {
 				setResult(RESULT_CANCELED);
 				exitState = getString(R.string.skip);
-				showRetryButton();
-				onFinish();
+				finish();
 			}
 		});
 	}
@@ -234,6 +229,7 @@ public class BlackLevelActivity extends Activity {
 		switch (keyCode) {
 		case KEY_TOP_SCAN:
 		case KEY_BOTTOM_SCAN:
+			setPreivewView(null);
 			if (doSnapshotFlag) { // first time scan
 				scanHelper.doSnap();
 				advancedHint();
@@ -252,34 +248,5 @@ public class BlackLevelActivity extends Activity {
 
 	}
 
-	public void onFinish() {
-		if (exiting)
-			return;
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				int count = 3;
-				exiting = true;
-				while (count > 0) {
-					count--;
-					final int num = count;
-					try {
-						Thread.sleep(PREPARE_TIME);
-						runOnUiThread(new Runnable() {
-							public void run() {
-								displayTextView.setText(exitState
-										+ ", next test coming in " + num);
-							}
-						});
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						continue;
-					}
-				}
-				finish();
-			}
-		}).start();
-	}
 
 }

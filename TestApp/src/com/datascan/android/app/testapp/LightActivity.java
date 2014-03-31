@@ -101,6 +101,7 @@ public class LightActivity extends Activity {
 		failButton = (Button) findViewById(R.id.fail_button);
 		displayTextView = (TextView) findViewById(R.id.display_textview);
 
+		buttonListener = new ButtonListener();
 		skipButton.setOnClickListener(buttonListener);
 		retryButton.setOnClickListener(buttonListener);
 		passButton.setOnClickListener(buttonListener);

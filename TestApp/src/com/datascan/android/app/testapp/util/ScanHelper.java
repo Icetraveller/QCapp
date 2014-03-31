@@ -1,6 +1,5 @@
 package com.datascan.android.app.testapp.util;
 
-
 import com.datascan.android.app.testapp.*;
 import com.motorolasolutions.adc.decoder.BarCodeReader;
 import com.motorolasolutions.adc.decoder.BarCodeReader.DecodeCallback;
@@ -41,6 +40,7 @@ public class ScanHelper implements DecodeCallback, PictureCallback,
 	static final int STATE_PREVIEW = 3; // snapshot preview mode
 	static final int STATE_SNAPSHOT = 4;
 	static final int STATE_VIDEO = 5;
+	static final int STATE_RESET = 6;
 
 	private int state = STATE_IDLE;
 
@@ -63,24 +63,23 @@ public class ScanHelper implements DecodeCallback, PictureCallback,
 	}
 
 	private void initReader() {
+		state = STATE_RESET;
 		if (bcr == null) {
 			boolean flag = openBcr();
 		}
 		bcr.setDecodeCallback(this);
-		doDefaultParams();
 		if (context instanceof DecodeActivity) {
-			setParam(136, 15); // set timeout 
+			setParam(136, 15); // set timeout
 		}
 		if (context instanceof BlackLevelActivity) {
-			setParam(BarCodeReader.ParamNum.IMG_FILE_FORMAT,3);
-			setParam(361,0); // turn off illumination
-			setParam(300,0); // turn off aim pattern
-			setParam(323,0); // set timeout to minimum
+			setParam(BarCodeReader.ParamNum.IMG_FILE_FORMAT, 3);
+			setParam(361, 0); // turn off illumination
+			setParam(300, 0); // turn off aim pattern
+			setParam(323, 0); // set timeout to minimum
 		}
-		
-		
+		state = STATE_IDLE;
+
 	}
-	
 
 	/**
 	 * used when user press pause button in MainActivity
@@ -96,7 +95,7 @@ public class ScanHelper implements DecodeCallback, PictureCallback,
 	 * Do decode
 	 */
 	public void doDecode() {
-		if (bcr == null) {
+		if (bcr == null || !(context instanceof DecodeActivity)) {
 			return;
 		}
 		if (setIdle() != STATE_IDLE)
@@ -108,7 +107,7 @@ public class ScanHelper implements DecodeCallback, PictureCallback,
 
 	public void doSnap() {
 		Log.e(TAG, "doSnap");
-		if (bcr == null) {
+		if (bcr == null || !(context instanceof BlackLevelActivity)) {
 			return;
 		}
 		if (setIdle() != STATE_IDLE)
@@ -215,7 +214,7 @@ public class ScanHelper implements DecodeCallback, PictureCallback,
 			if (decodeCount > 1) { // Add the next line only if multiple decode
 				decodeDataString += new String(" ; ");
 			}
-			if(decodeCount == decodeNumber){
+			if (decodeCount == decodeNumber) {
 				state = STATE_IDLE;
 			}
 			beep();
@@ -243,9 +242,9 @@ public class ScanHelper implements DecodeCallback, PictureCallback,
 				break;
 			}
 
-			 if (length != BarCodeReader.DECODE_STATUS_MULTI_DEC_COUNT) {
-				 state = STATE_IDLE;
-			 }
+			if (length != BarCodeReader.DECODE_STATUS_MULTI_DEC_COUNT) {
+				state = STATE_IDLE;
+			}
 		}
 		if (context instanceof DecodeActivity) {
 			Log.e(TAG, "I'm a DecodeActivity");
@@ -257,7 +256,23 @@ public class ScanHelper implements DecodeCallback, PictureCallback,
 
 	@Override
 	public void onEvent(int event, int info, byte[] data, BarCodeReader reader) {
-		// TODO Auto-generated method stub
+		// // TODO Auto-generated method stub
+		// Log.e(TAG, "event= "+event+" info= "+info);
+		// if(event ==7){
+		// state = STATE_RESET;
+		// if (context instanceof DecodeActivity) {
+		// doDefaultParams();
+		// setParam(136, 15); // set timeout
+		// }
+		// if (context instanceof BlackLevelActivity) {
+		// doDefaultParams();
+		// setParam(BarCodeReader.ParamNum.IMG_FILE_FORMAT,3);
+		// setParam(361,0); // turn off illumination
+		// setParam(300,0); // turn off aim pattern
+		// setParam(323,0); // set timeout to minimum
+		// }
+		// state = STATE_IDLE;
+		// }
 
 	}
 

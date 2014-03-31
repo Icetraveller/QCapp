@@ -79,6 +79,7 @@ public class AccelerometerActivity extends Activity {
 		failButton = (Button) findViewById(R.id.fail_button);
 		displayTextView = (TextView) findViewById(R.id.display_textview);
 
+		buttonListener = new ButtonListener();
 		skipButton.setOnClickListener(buttonListener);
 		retryButton.setOnClickListener(buttonListener);
 		passButton.setOnClickListener(buttonListener);
@@ -105,7 +106,7 @@ public class AccelerometerActivity extends Activity {
 			finish();
 		}
 	}
-
+	
 	/**
 	 * The listener that listen to events from the accelerometer listener
 	 */

@@ -8,6 +8,7 @@ import com.datascan.android.app.testapp.util.SaveHelper;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
@@ -77,30 +78,30 @@ public class MainActivity extends Activity {
 		Log.e(TAG, "Main onResume");
 		testProcess();
 		updateResult();
-		
+
 	}
-	
-	private void unlockScreenAndKeepOn(){
-		getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-		getWindow().addFlags(LayoutParams.FLAG_DISMISS_KEYGUARD);  
+
+	private void unlockScreenAndKeepOn() {
+		getWindow().addFlags(
+				android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		getWindow().addFlags(LayoutParams.FLAG_DISMISS_KEYGUARD);
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-	
+
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item){
-	    switch(item.getItemId()){
-	    case R.id.action_deletefiles:
-	    	SaveHelper.deleteFiles();
-	    	onRestart();
-	        return true;            
-	    }
-	    return false;
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.action_deletefiles:
+			SaveHelper.deleteFiles();
+			return true;
+		}
+		return false;
 	}
 
 	private void updateResult() {
@@ -110,6 +111,11 @@ public class MainActivity extends Activity {
 			key = passTest.keyAt(i);
 			// get the object by the key.
 			Boolean flag = (Boolean) passTest.get(key);
+			if(flag){
+				sb.append("<font color='green'>");
+			}else{
+				sb.append("<font color='red'>");
+			}
 			String name = getTestName(key);
 			sb.append(name).append(" ");
 			if (flag) {
@@ -117,9 +123,10 @@ public class MainActivity extends Activity {
 			} else {
 				sb.append("\t Failed");
 			}
-			sb.append("\n");
+			sb.append("</font>");
+			sb.append("<br>");
 		}
-		resultTextView.setText(sb.toString());
+		resultTextView.setText(Html.fromHtml(sb.toString()), TextView.BufferType.SPANNABLE);
 	}
 
 	private String getTestName(int category) {
@@ -174,7 +181,8 @@ public class MainActivity extends Activity {
 		} else if (doTest.get(BLACKLEVEL_TEST_REQUEST)) {
 			Intent intent = new Intent(this, BlackLevelActivity.class);
 			startActivityForResult(intent, BLACKLEVEL_TEST_REQUEST);
-		} else if (doTest.get(LED_TEST_REQUEST)) {
+		} 
+			else if (doTest.get(LED_TEST_REQUEST)) {
 			Intent intent = new Intent(this, LEDActivity.class);
 			startActivityForResult(intent, LED_TEST_REQUEST);
 		} else if (doTest.get(ACCELEROMETER_TEST_REQUEST)) {
@@ -207,9 +215,14 @@ public class MainActivity extends Activity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		Log.e(TAG, "onActivityResult resultCode= " + resultCode
 				+ " requestCode= " + requestCode);
-		if (requestCode == RTC_TEST_REQUEST || requestCode == DMSG_TEST_REQUEST) {
+		if (requestCode == RTC_TEST_REQUEST) {
 			PreferenceHelper.setTesting(this, false);
-			Log.e(TAG, "quit RTC or Dmsg");
+			Log.e(TAG, "quit RTC ");
+		}
+		if (requestCode == DMSG_TEST_REQUEST) {
+			PreferenceHelper.setTesting(this, false);
+			SaveHelper.deleteFiles();
+			Log.e(TAG, "quit DMSG ");
 		}
 		if (resultCode == RESULT_OK) { // passed the test
 			doTest.put(requestCode, false);
@@ -230,6 +243,7 @@ public class MainActivity extends Activity {
 				String reasonString = data.getStringExtra(FAIL_REASON);
 			}
 		}
+
 	}
 
 }
