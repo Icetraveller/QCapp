@@ -270,12 +270,10 @@ public class BarCodeReader
 	public native final int FWUpdate(String FilePath, boolean forceDownload, boolean IgnoreSignature);
 	
 	/**
-	 * Starts capturing frames in video mode. If a surface has been supplied
-	 * with {@link #setPreviewDisplay(SurfaceHolder)}, the frames will
-	 * be drawn to the surface.
+	 * Starts capturing frames in video mode.	 
 	 *
 	 * <p>{@link BarCodeReader.VideoCallback#onVideoFrame(format, width, height, byte[], BarCodeReader)}
-	 * will be called when preview data becomes available. The data passed will be
+	 * will be called when video frame data becomes available. The data passed will be
 	 * in the format and resolution specified by ParamNum.IMG_FILE_FORMAT and
 	 * ParamNum.IMG_VIDEOSUB.
 	 */
@@ -305,9 +303,9 @@ public class BarCodeReader
 	 * called, {@link BarCodeReader.PreviewCallback#onPreviewFrame(byte[], BarCodeReader)}
 	 * will be called when preview data becomes available. 
 	 *
-	 * <p>If {@link #setImageCallback(BarCodeReader.ImageCallback)} was
-	 * called, {@link BarCodeReader.PreviewCallback#onVideoFrame(format, width, height, byte[], BarCodeReader)}
-	 * will be called when preview data becomes available. The data passed will be
+	 * <p>If {@link #setVideoCallback(BarCodeReader.VideoCallback)} was
+	 * called, {@link BarCodeReader.VideoCallback#onVideoFrame(format, width, height, byte[], BarCodeReader)}
+	 * will be called when video frame data becomes available. The data passed will be
 	 * in the format and resolution specified by ParamNum.IMG_FILE_FORMAT and
 	 * ParamNum.IMG_VIDEOSUB.
 	 */

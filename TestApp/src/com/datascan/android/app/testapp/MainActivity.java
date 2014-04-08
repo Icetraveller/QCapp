@@ -27,12 +27,12 @@ public class MainActivity extends Activity {
 	private SparseBooleanArray passTest = new SparseBooleanArray();
 
 	private static final int DECODE_TEST_REQUEST = 0;
-	private static final int BLACKLEVEL_TEST_REQUEST = 1;
-	private static final int WIFI_TEST_REQUEST = 2;
-	private static final int RTC_TEST_REQUEST = 3;
-	private static final int ACCELEROMETER_TEST_REQUEST = 4;
-	private static final int LIGHT_TEST_REQUEST = 5;
-	private static final int LED_TEST_REQUEST = 6;
+	private static final int LED_TEST_REQUEST = 1;
+	private static final int ACCELEROMETER_TEST_REQUEST = 2;
+	private static final int WIFI_TEST_REQUEST = 3;
+	private static final int LIGHT_TEST_REQUEST = 4;
+	private static final int BLACKLEVEL_TEST_REQUEST = 5;
+	private static final int RTC_TEST_REQUEST = 6;
 	private static final int DMSG_TEST_REQUEST = 7;
 	private static final int TEST_NUM = 8;
 
@@ -97,6 +97,7 @@ public class MainActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.action_deletefiles:
+			PreferenceHelper.setTesting(this, false);
 			SaveHelper.deleteFiles();
 			return true;
 		}
@@ -167,10 +168,10 @@ public class MainActivity extends Activity {
 	 */
 	public void testProcess() {
 		// for test only
-//		 if (doTest.get(BLACKLEVEL_TEST_REQUEST)) {
+////		 if (doTest.get(BLACKLEVEL_TEST_REQUEST)) {
 //			 Intent intent = new Intent(this, BlackLevelActivity.class);
-//				startActivityForResult(intent, BLACKLEVEL_TEST_REQUEST);
-//		 } 
+//			 startActivityForResult(intent, BLACKLEVEL_TEST_REQUEST);
+////		 } 
 		Log.e(TAG, "" + PreferenceHelper.isTesting(this));
 		if (doTest.get(DECODE_TEST_REQUEST)) {
 			Intent intent = new Intent(this, DecodeActivity.class);

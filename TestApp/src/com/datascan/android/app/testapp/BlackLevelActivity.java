@@ -235,12 +235,12 @@ public class BlackLevelActivity extends Activity {
 			setPreivewView(null);
 			if (doSnapshotFlag) { // first time scan
 				doSnapshotFlag = false;
-				scanHelper.doSnap();
+				scanHelper.doVideo();
 				advancedHint();
 			} else { // scan stuck, try manual restart
 				Log.e(TAG,"restart and dosnap")	;
 				scanHelper.restart();
-				scanHelper.doSnap();
+				scanHelper.doVideo();
 				advancedHint();
 			}
 			return false;

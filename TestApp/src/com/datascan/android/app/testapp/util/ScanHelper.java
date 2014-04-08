@@ -7,6 +7,8 @@ import com.motorolasolutions.adc.decoder.BarCodeReader.PictureCallback;
 import com.motorolasolutions.adc.decoder.BarCodeReader.VideoCallback;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Environment;
@@ -68,6 +70,7 @@ public class ScanHelper implements DecodeCallback, PictureCallback,
 			boolean flag = openBcr();
 		}
 		bcr.setDecodeCallback(this);
+		doDefaultParams();
 		if (context instanceof DecodeActivity) {
 			setParam(136, 15); // set timeout
 		}
@@ -76,6 +79,7 @@ public class ScanHelper implements DecodeCallback, PictureCallback,
 			setParam(361, 0); // turn off illumination
 			setParam(300, 0); // turn off aim pattern
 			setParam(323, 0); // set timeout to minimum
+			setParam(761, 0); // scale video
 		}
 		state = STATE_IDLE;
 
@@ -118,6 +122,16 @@ public class ScanHelper implements DecodeCallback, PictureCallback,
 		bcr.takePicture(this);
 	}
 
+	public void doVideo() {
+		if (setIdle() != STATE_IDLE)
+			return;
+
+		state = STATE_VIDEO;
+		// vidScreen(false); //start video
+		// videoCapDisplayStarted = false;
+		bcr.startVideoCapture(this); // start video
+	}
+
 	/**
 	 * 
 	 * @return successful or not
@@ -149,7 +163,7 @@ public class ScanHelper implements DecodeCallback, PictureCallback,
 				e.printStackTrace();
 			}
 			bcr = null;
-		}else{
+		} else {
 			Log.e(TAG, "bcr is null");
 		}
 	}
@@ -192,6 +206,7 @@ public class ScanHelper implements DecodeCallback, PictureCallback,
 		if (decodeCount > decodeNumber)
 			return;
 		if (length == BarCodeReader.DECODE_STATUS_MULTI_DEC_COUNT) {
+			Log.e(TAG, "multi decode");
 			decodeNumber = symbology;
 			decodeCount = 0;
 		}
@@ -313,6 +328,7 @@ public class ScanHelper implements DecodeCallback, PictureCallback,
 	}
 
 	public void restart() {
+		bcr.stopPreview();
 		close();
 		initReader();
 	}
@@ -320,7 +336,21 @@ public class ScanHelper implements DecodeCallback, PictureCallback,
 	@Override
 	public void onVideoFrame(int format, int width, int height, byte[] data,
 			BarCodeReader reader) {
-		// TODO Auto-generated method stub
+		if (state != STATE_VIDEO)
+			return;
+		Log.e(TAG, "onVideoFrame");
+
+		// display snapshot
+		Bitmap bmSnap = BitmapFactory.decodeByteArray(data, 0, data.length);
+		if (bmSnap != null) {
+
+			if (context instanceof BlackLevelActivity) {
+				Log.e(TAG, "I'm a BlackLevelActivity");
+				((BlackLevelActivity) context).showPreview(data);
+			}
+			bcr.stopPreview();
+			state = STATE_IDLE;
+		}
 
 	}
 

@@ -37,10 +37,12 @@
     <string name="hint_scan">Press <xliff:g id="key" example="bottom_scan_key">%1$s</xliff:g> to scan.</string>
     <string name="hint_accelerometer">Change the orientation of the scanner.\n The test should pass automatically, otherwise press fail button to continue.</string>
     <string name="hint_led">Press Pass button if LED is flashing, otherwise, press fail button.</string>
-    <string name="hint_light">Please place scanner in a bright environment.</string>
+    <string name="hint_light">Place the scanner in different light environment.</string>
+    <string name="hint_light_light">Place the scanner in bright environment.</string>
+    <string name="hint_light_dark">Place the scanner in dark environment.</string>
 
     <string name="hint_snapshot_restart">Restarting scanner, it may take 5 seconds</string>
-    <string name="hint_snapshot_advanced">If no black picture shown below after 5 seconds, press scan button to take picture manually.</string>
+    <string name="hint_snapshot_advanced">If no black picture shown below after 3 seconds, press scan button 5 times fast and wait.</string>
     <string name="hint_black_level">Use your hand to block scan engine and scan black.</string>
     <!-- RTC test -->
     <string name="action_settings">Delete Files</string>

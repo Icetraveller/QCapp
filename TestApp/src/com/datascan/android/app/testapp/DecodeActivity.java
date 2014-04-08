@@ -153,10 +153,12 @@ public class DecodeActivity extends Activity {
 		// }
 
 		if (!doTopScan && !topResult) {
+			doBottomScan = false;
 			setResult(MainActivity.RESULT_FAIL);
 			final String resultStr = getString(R.string.failed);
 			displayTextView.setText(resultStr);
 		} else if (!doBottomScan && !bottomResult) {
+			doTopScan = false;
 			setResult(MainActivity.RESULT_FAIL);
 			final String resultStr = getString(R.string.failed);
 			displayTextView.setText(resultStr);

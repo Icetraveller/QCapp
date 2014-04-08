@@ -42,6 +42,11 @@ public class LightActivity extends Activity {
 				if (firstRead) {
 					initLightValue = event.values[0];
 					firstRead = false;
+					if(initLightValue == 0){
+						displayTextView.setText(R.string.hint_light_light);
+					}else{
+						displayTextView.setText(R.string.hint_light_dark);
+					}
 				} else {
 					if (initLightValue != event.values[0]) {
 						Log.e(TAG, "onSensorChanged");
