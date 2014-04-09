@@ -42,7 +42,7 @@
     <string name="hint_light_dark">Place the scanner in dark environment.</string>
 
     <string name="hint_snapshot_restart">Restarting scanner, it may take 5 seconds</string>
-    <string name="hint_snapshot_advanced">If no black picture shown below after 3 seconds, press scan button 5 times fast and wait.</string>
+    <string name="hint_snapshot_advanced">If no black picture shown below after 5 seconds, press scan button again and wait.</string>
     <string name="hint_black_level">Use your hand to block scan engine and scan black.</string>
     <!-- RTC test -->
     <string name="action_settings">Delete Files</string>

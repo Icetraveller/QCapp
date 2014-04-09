@@ -156,13 +156,12 @@ public class ScanHelper implements DecodeCallback, PictureCallback,
 		if (bcr != null) {
 			Log.e(TAG, "succeed to close");
 			bcr.release();
-			try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			bcr = null;
+			try{
+				Thread.sleep(500);
+			}catch(Exception e){
+				e.getMessage();
+			}
 		} else {
 			Log.e(TAG, "bcr is null");
 		}
@@ -323,6 +322,7 @@ public class ScanHelper implements DecodeCallback, PictureCallback,
 		if (context instanceof BlackLevelActivity) {
 			Log.e(TAG, "I'm a SnapshotActivity");
 			((BlackLevelActivity) context).showPreview(abData);
+			bcr.stopPreview();
 		}
 		state = STATE_IDLE;
 	}
@@ -347,8 +347,8 @@ public class ScanHelper implements DecodeCallback, PictureCallback,
 			if (context instanceof BlackLevelActivity) {
 				Log.e(TAG, "I'm a BlackLevelActivity");
 				((BlackLevelActivity) context).showPreview(data);
+				bcr.stopPreview();
 			}
-			bcr.stopPreview();
 			state = STATE_IDLE;
 		}
 
