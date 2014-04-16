@@ -174,6 +174,8 @@ public class MainActivity extends Activity {
 ////		 } 
 		Log.e(TAG, "" + PreferenceHelper.isTesting(this));
 		if (doTest.get(DECODE_TEST_REQUEST)) {
+			//keep saving file 
+			PreferenceHelper.setTesting(this, true);
 			Intent intent = new Intent(this, DecodeActivity.class);
 			startActivityForResult(intent, DECODE_TEST_REQUEST);
 		} else if (doTest.get(LED_TEST_REQUEST)) {
@@ -199,15 +201,15 @@ public class MainActivity extends Activity {
 			}
 		} else if (doTest.get(RTC_TEST_REQUEST)) {
 			Log.e(TAG, "rtc save");
-			String report = resultTextView.getText().toString();
-			SaveHelper.save(report, doTest, passTest);
+			
+//			SaveHelper.save(report, doTest, passTest);
 			PreferenceHelper.setTesting(this, true);
 			Intent intent = new Intent(this, RTCActivity.class);
 			startActivityForResult(intent, RTC_TEST_REQUEST);
 		} else if (doTest.get(DMSG_TEST_REQUEST)) {
 			Log.e(TAG, " dmsg save");
-			String report = resultTextView.getText().toString();
-			SaveHelper.save(report, doTest, passTest);
+//			String report = resultTextView.getText().toString();
+//			SaveHelper.save(report, doTest, passTest);
 			PreferenceHelper.setTesting(this, true);
 			Intent intent = new Intent(this, DmsgActivity.class);
 			startActivityForResult(intent, DMSG_TEST_REQUEST);
@@ -219,7 +221,7 @@ public class MainActivity extends Activity {
 		Log.e(TAG, "onActivityResult resultCode= " + resultCode
 				+ " requestCode= " + requestCode);
 		if (requestCode == RTC_TEST_REQUEST) {
-			PreferenceHelper.setTesting(this, false);
+//			PreferenceHelper.setTesting(this, false);
 			Log.e(TAG, "quit RTC ");
 		}
 		
@@ -242,13 +244,16 @@ public class MainActivity extends Activity {
 				String reasonString = data.getStringExtra(FAIL_REASON);
 			}
 		}
+		String report = resultTextView.getText().toString();
+		SaveHelper.save(report, doTest, passTest);
+		
 		if (requestCode == DMSG_TEST_REQUEST) {
 			PreferenceHelper.setTesting(this, false);
 			SaveHelper.deleteFiles();
 			updateResult();
 			Log.e(TAG, "quit DMSG ");
 		}
-
 	}
+	
 
 }
