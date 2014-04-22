@@ -11,7 +11,7 @@ public class BootReceiver extends BroadcastReceiver{
 	private static final String TAG = LogUtil.makeLogTag(BootReceiver.class);
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		boolean active = PreferenceHelper.isTesting(context);
+		boolean active = PreferenceHelper.isOnBoot(context);
 		Log.e(TAG,"In Test is "+active);
 		if(active){
 			Intent mainIntent = new Intent(context.getApplicationContext(), MainActivity.class);

@@ -204,6 +204,7 @@ public class MainActivity extends Activity {
 			
 //			SaveHelper.save(report, doTest, passTest);
 			PreferenceHelper.setTesting(this, true);
+			PreferenceHelper.setOnBoot(this, true);
 			Intent intent = new Intent(this, RTCActivity.class);
 			startActivityForResult(intent, RTC_TEST_REQUEST);
 		} else if (doTest.get(DMSG_TEST_REQUEST)) {
@@ -211,6 +212,7 @@ public class MainActivity extends Activity {
 //			String report = resultTextView.getText().toString();
 //			SaveHelper.save(report, doTest, passTest);
 			PreferenceHelper.setTesting(this, true);
+			PreferenceHelper.setOnBoot(this, true);
 			Intent intent = new Intent(this, DmsgActivity.class);
 			startActivityForResult(intent, DMSG_TEST_REQUEST);
 		}
@@ -222,6 +224,7 @@ public class MainActivity extends Activity {
 				+ " requestCode= " + requestCode);
 		if (requestCode == RTC_TEST_REQUEST) {
 //			PreferenceHelper.setTesting(this, false);
+			PreferenceHelper.setOnBoot(this, false);
 			Log.e(TAG, "quit RTC ");
 		}
 		
@@ -249,6 +252,7 @@ public class MainActivity extends Activity {
 		
 		if (requestCode == DMSG_TEST_REQUEST) {
 			PreferenceHelper.setTesting(this, false);
+			PreferenceHelper.setOnBoot(this, false);
 			SaveHelper.deleteFiles();
 			updateResult();
 			Log.e(TAG, "quit DMSG ");
