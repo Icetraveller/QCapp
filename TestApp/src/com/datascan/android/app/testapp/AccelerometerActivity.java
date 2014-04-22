@@ -35,13 +35,18 @@ public class AccelerometerActivity extends Activity {
 	private boolean firstRead;
 
 	/** Accuracy configuration */
-	private static float threshold = 15.0f;
+	private static float threshold = 12.0f;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_light);
 		findUI();
 		setTitle(R.string.title_accelerometer);
+	}
+	
+	public void finish() {
+		sensorManager.unregisterListener(sensorEventListener);
+		super.finish();
 	}
 
 	public void onResume() {

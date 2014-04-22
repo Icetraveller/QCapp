@@ -168,10 +168,10 @@ public class MainActivity extends Activity {
 	 */
 	public void testProcess() {
 		// for test only
-////		 if (doTest.get(BLACKLEVEL_TEST_REQUEST)) {
+//		 if (doTest.get(BLACKLEVEL_TEST_REQUEST)) {
 //			 Intent intent = new Intent(this, BlackLevelActivity.class);
 //			 startActivityForResult(intent, BLACKLEVEL_TEST_REQUEST);
-////		 } 
+//		 } 
 		Log.e(TAG, "" + PreferenceHelper.isTesting(this));
 		if (doTest.get(DECODE_TEST_REQUEST)) {
 			//keep saving file 

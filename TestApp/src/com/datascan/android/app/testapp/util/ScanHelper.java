@@ -157,11 +157,6 @@ public class ScanHelper implements DecodeCallback, PictureCallback,
 			Log.e(TAG, "succeed to close");
 			bcr.release();
 			bcr = null;
-			try{
-				Thread.sleep(500);
-			}catch(Exception e){
-				e.getMessage();
-			}
 		} else {
 			Log.e(TAG, "bcr is null");
 		}

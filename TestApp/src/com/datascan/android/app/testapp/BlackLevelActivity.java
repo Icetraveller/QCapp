@@ -89,19 +89,18 @@ public class BlackLevelActivity extends Activity {
 
 	private void showHint() {
 		setDisplayTextView(getString(R.string.hint_black_level));
-		try {
-			Bitmap bmSnap = BitmapFactory.decodeResource(getResources(),
-					R.drawable.hint_blacklevel);
-			bmSnap = Bitmap.createScaledBitmap(bmSnap, 320, 254, false);
-			if (bmSnap == null) {
-				return;
-			}
-			previewImageView.setImageBitmap(bmSnap);
-			previewImageView.setVisibility(View.VISIBLE);
-		} catch (NotFoundException e) {
-			previewImageView.setImageBitmap(null);
-			previewImageView.setVisibility(View.INVISIBLE);
-		}
+//		try {
+//			Bitmap bmSnap = BitmapFactory.decodeResource(getResources(),
+//					R.drawable.hint_blacklevel);
+//			if (bmSnap == null) {
+//				return;
+//			}
+//			previewImageView.setImageBitmap(bmSnap);
+//			previewImageView.setVisibility(View.VISIBLE);
+//		} catch (NotFoundException e) {
+//			previewImageView.setImageBitmap(null);
+//			previewImageView.setVisibility(View.INVISIBLE);
+//		}
 
 	}
 
