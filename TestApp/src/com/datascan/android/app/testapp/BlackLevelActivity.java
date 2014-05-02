@@ -30,7 +30,8 @@ import com.datascan.android.app.testapp.util.ScanHelper;
  * @author yue
  * 
  */
-public class BlackLevelActivity extends Activity implements ScanHelper.CallBacks{
+public class BlackLevelActivity extends Activity implements
+		ScanHelper.CallBacks {
 
 	private ImageView previewImageView;
 	private Button skipButton, retryButton;
@@ -68,7 +69,7 @@ public class BlackLevelActivity extends Activity implements ScanHelper.CallBacks
 		findUI();
 		setTitle(R.string.title_blacklevel);
 		resetState();
-		
+
 	}
 
 	@Override
@@ -93,18 +94,18 @@ public class BlackLevelActivity extends Activity implements ScanHelper.CallBacks
 
 	private void showHint() {
 		setDisplayTextView(getString(R.string.hint_black_level));
-		// try {
-		// bmSnap = BitmapFactory.decodeResource(getResources(),
-		// R.drawable.hint_blacklevel);
-		// if (bmSnap == null) {
-		// return;
-		// }
-		// previewImageView.setImageBitmap(bmSnap);
-		// previewImageView.setVisibility(View.VISIBLE);
-		// } catch (NotFoundException e) {
-		// previewImageView.setImageBitmap(null);
-		// previewImageView.setVisibility(View.INVISIBLE);
-		// }
+		try {
+			bmSnap = BitmapFactory.decodeResource(getResources(),
+					R.drawable.hint_blacklevel);
+			if (bmSnap == null) {
+				return;
+			}
+			previewImageView.setImageBitmap(bmSnap);
+			previewImageView.setVisibility(View.VISIBLE);
+		} catch (NotFoundException e) {
+			previewImageView.setImageBitmap(null);
+			previewImageView.setVisibility(View.INVISIBLE);
+		}
 
 	}
 
@@ -185,7 +186,7 @@ public class BlackLevelActivity extends Activity implements ScanHelper.CallBacks
 				previewImageView.getHeight(), false);
 		if (bmSnap == null) {
 			return;
-		} 
+		}
 		final Bitmap bitmapImage = bmSnap;
 		final byte[] data = abData;
 		new Thread(new Runnable() {
@@ -202,7 +203,7 @@ public class BlackLevelActivity extends Activity implements ScanHelper.CallBacks
 		}).start();
 		inProcess = false;
 	}
-	
+
 	@Override
 	public void onPause() {
 		super.onPause();
@@ -261,7 +262,7 @@ public class BlackLevelActivity extends Activity implements ScanHelper.CallBacks
 		switch (keyCode) {
 		case KEY_TOP_SCAN:
 		case KEY_BOTTOM_SCAN:
-			if(!inProcess){
+			if (!inProcess) {
 				inProcess = true;
 				setPreivewView(null);
 				scanHelper.doVideo();
@@ -299,7 +300,7 @@ public class BlackLevelActivity extends Activity implements ScanHelper.CallBacks
 	public void onDecodeComplete(String decodeDataString, int symbology,
 			int length) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }
