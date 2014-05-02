@@ -19,7 +19,7 @@ import com.datascan.android.app.testapp.util.LogUtil;
 import com.datascan.android.app.testapp.util.ScanHelper;
 import com.motorolasolutions.adc.decoder.BarCodeReader;
 
-public class DecodeActivity extends Activity {
+public class DecodeActivity extends Activity implements ScanHelper.CallBacks{
 
 	private ImageView previewImageView;
 	private Button skipButton, retryButton;
@@ -210,6 +210,19 @@ public class DecodeActivity extends Activity {
 			return false;
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+
+	@Override
+	public void onVideoFrame(byte[] frameData) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDecodeComplete(String decodeDataString, int symbology,
+			int length) {
+		showMessage(decodeDataString, length, length);
+		
 	}
 
 }

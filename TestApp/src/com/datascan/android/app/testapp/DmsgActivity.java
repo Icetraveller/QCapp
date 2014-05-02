@@ -26,7 +26,7 @@ public class DmsgActivity extends Activity {
 	
 	private static final String TAG = LogUtil.makeLogTag(DmsgActivity.class);
 
-	private static final int REBOOT_MAX = 10;
+	private static final int REBOOT_MAX = 1;
 
 	void PassOrFail() {
 		TextView t = (TextView) findViewById(R.id.tvMine);

@@ -26,12 +26,6 @@ public class ScanHelper implements DecodeCallback, PictureCallback,
 
 	private final static String TAG = "ScanHelper";
 
-	static {
-		System.loadLibrary("IAL");
-		System.loadLibrary("SDL");
-		System.loadLibrary("barcodereader");
-	}
-
 	// BarCodeReader specifics
 	private static BarCodeReader bcr = null;
 
@@ -54,6 +48,14 @@ public class ScanHelper implements DecodeCallback, PictureCallback,
 
 	private int decodeCount = 0;
 	private int decodeNumber = 0;
+	
+	private CallBacks cb;
+	
+	public interface CallBacks{
+		void onVideoFrame(byte[] frameData);
+		void onDecodeComplete(String decodeDataString, int symbology,
+				int length);
+	}
 
 	public ScanHelper(Context context) {
 		this.context = context;
@@ -62,6 +64,7 @@ public class ScanHelper implements DecodeCallback, PictureCallback,
 		// sound
 		tg = new ToneGenerator(AudioManager.STREAM_MUSIC,
 				ToneGenerator.MAX_VOLUME);
+		cb = (CallBacks) context;
 	}
 
 	private void initReader() {
@@ -130,6 +133,7 @@ public class ScanHelper implements DecodeCallback, PictureCallback,
 		// vidScreen(false); //start video
 		// videoCapDisplayStarted = false;
 		bcr.startVideoCapture(this); // start video
+		
 	}
 
 	/**
@@ -154,9 +158,15 @@ public class ScanHelper implements DecodeCallback, PictureCallback,
 	public void close() {
 		Log.e(TAG, "bcr is about to close");
 		if (bcr != null) {
-			Log.e(TAG, "succeed to close");
-			bcr.release();
+			try { 
+				bcr.release();
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			bcr = null;
+			Log.e(TAG, "succeed to close");
 		} else {
 			Log.e(TAG, "bcr is null");
 		}
@@ -266,8 +276,9 @@ public class ScanHelper implements DecodeCallback, PictureCallback,
 		}
 		if (context instanceof DecodeActivity) {
 			Log.e(TAG, "I'm a DecodeActivity");
-			((DecodeActivity) context).showMessage(decodeDataString, symbology,
-					length);
+//			((DecodeActivity) context).showMessage(decodeDataString, symbology,
+//					length);
+			cb.onDecodeComplete(decodeDataString, symbology, length);
 		}
 		stopDecode();
 	}
@@ -329,11 +340,12 @@ public class ScanHelper implements DecodeCallback, PictureCallback,
 	}
 
 	@Override
-	public void onVideoFrame(int format, int width, int height, byte[] data,
+	public void onVideoFrame(int format, int width, int height, byte[] abData,
 			BarCodeReader reader) {
 		if (state != STATE_VIDEO)
 			return;
 		Log.e(TAG, "onVideoFrame");
+		final byte[] data = abData;
 
 		// display snapshot
 		Bitmap bmSnap = BitmapFactory.decodeByteArray(data, 0, data.length);
@@ -341,12 +353,12 @@ public class ScanHelper implements DecodeCallback, PictureCallback,
 
 			if (context instanceof BlackLevelActivity) {
 				Log.e(TAG, "I'm a BlackLevelActivity");
-				((BlackLevelActivity) context).showPreview(data);
-				bcr.stopPreview();
+				cb.onVideoFrame(data);
+//				((BlackLevelActivity) context).showPreview(data);
+				
 			}
 			state = STATE_IDLE;
 		}
-
 	}
 
 }

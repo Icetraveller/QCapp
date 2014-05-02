@@ -30,7 +30,7 @@ import com.datascan.android.app.testapp.util.ScanHelper;
  * @author yue
  * 
  */
-public class BlackLevelActivity extends Activity {
+public class BlackLevelActivity extends Activity implements ScanHelper.CallBacks{
 
 	private ImageView previewImageView;
 	private Button skipButton, retryButton;
@@ -51,6 +51,7 @@ public class BlackLevelActivity extends Activity {
 
 	private boolean doSnapshotFlag;
 	private static final int PREPARE_TIME = 1000;
+	private boolean inProcess = false;
 
 	private boolean retryFlag;
 
@@ -67,6 +68,7 @@ public class BlackLevelActivity extends Activity {
 		findUI();
 		setTitle(R.string.title_blacklevel);
 		resetState();
+		
 	}
 
 	@Override
@@ -77,34 +79,36 @@ public class BlackLevelActivity extends Activity {
 		// show tutorial
 		showHint();
 	}
-	
-	private void init(){
+
+	private void init() {
 		setDisplayTextView(getString(R.string.initializing));
-		try{
+		try {
 			Thread.sleep(1000);
-		}catch(Exception e){
+		} catch (Exception e) {
 			e.getMessage();
 		}
 	}
 
+	Bitmap bmSnap;
+
 	private void showHint() {
 		setDisplayTextView(getString(R.string.hint_black_level));
-//		try {
-//			Bitmap bmSnap = BitmapFactory.decodeResource(getResources(),
-//					R.drawable.hint_blacklevel);
-//			if (bmSnap == null) {
-//				return;
-//			}
-//			previewImageView.setImageBitmap(bmSnap);
-//			previewImageView.setVisibility(View.VISIBLE);
-//		} catch (NotFoundException e) {
-//			previewImageView.setImageBitmap(null);
-//			previewImageView.setVisibility(View.INVISIBLE);
-//		}
+		// try {
+		// bmSnap = BitmapFactory.decodeResource(getResources(),
+		// R.drawable.hint_blacklevel);
+		// if (bmSnap == null) {
+		// return;
+		// }
+		// previewImageView.setImageBitmap(bmSnap);
+		// previewImageView.setVisibility(View.VISIBLE);
+		// } catch (NotFoundException e) {
+		// previewImageView.setImageBitmap(null);
+		// previewImageView.setVisibility(View.INVISIBLE);
+		// }
 
 	}
 
-	private void analyze(int[] data) {
+	private boolean analyze(int[] data) {
 		boolean testResult = true;
 		StringBuilder sb = new StringBuilder();
 		for (int j = 4; j < 8; j++) {
@@ -117,7 +121,7 @@ public class BlackLevelActivity extends Activity {
 			setDisplayTextView("Passed");
 			exitState = getString(R.string.passed);
 			setResult(RESULT_OK);
-			finish();
+			return true;
 		} else {
 			setDisplayTextView("Failed");
 			exitState = getString(R.string.failed);
@@ -131,6 +135,7 @@ public class BlackLevelActivity extends Activity {
 					showRetryButton();
 				}
 			});
+			return false;
 		}
 	}
 
@@ -170,7 +175,8 @@ public class BlackLevelActivity extends Activity {
 		displayTextView = (TextView) findViewById(R.id.display_textview);
 	}
 
-	public void showPreview(byte[] abData) {
+	public void showPreview(byte[] abDataa) {
+		final byte[] abData = abDataa;
 		Bitmap bmSnap = BitmapFactory.decodeByteArray(abData, 0, abData.length);
 		Log.e(TAG,
 				"" + previewImageView.getWidth() + " "
@@ -179,7 +185,7 @@ public class BlackLevelActivity extends Activity {
 				previewImageView.getHeight(), false);
 		if (bmSnap == null) {
 			return;
-		}
+		} 
 		final Bitmap bitmapImage = bmSnap;
 		final byte[] data = abData;
 		new Thread(new Runnable() {
@@ -187,20 +193,37 @@ public class BlackLevelActivity extends Activity {
 			public void run() {
 				setPreivewView(bitmapImage);
 				setDisplayTextView(getString(R.string.processing));
-				analyze(loadCounter(data));
 				Log.e(TAG, "showPreview good");
+				boolean result = analyze(loadCounter(data));
+				if (result) {
+					finish();
+				}
 			}
 		}).start();
+		inProcess = false;
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		if (scanHelper != null) {
+			Log.e(TAG, "close");
+			scanHelper.close();
+		}
 	}
 
 	public void finish() {
-		if (retryFlag) {
-			setResult(MainActivity.RESULT_RETRY);
+		try {
+			previewImageView = null;
+			if (retryFlag) {
+				setResult(MainActivity.RESULT_RETRY);
+			}
+		} catch (Exception e) {
+			Log.e(TAG, e.getMessage());
+		} finally {
+			super.finish();
 		}
-		if (scanHelper != null) {
-			scanHelper.close();
-		}
-		super.finish();
+
 	}
 
 	private void showSkipButton() {
@@ -238,9 +261,12 @@ public class BlackLevelActivity extends Activity {
 		switch (keyCode) {
 		case KEY_TOP_SCAN:
 		case KEY_BOTTOM_SCAN:
-			setPreivewView(null);
-			scanHelper.doVideo();
-			advancedHint();
+			if(!inProcess){
+				inProcess = true;
+				setPreivewView(null);
+				scanHelper.doVideo();
+				advancedHint();
+			}
 			return false;
 		}
 		return super.onKeyDown(keyCode, event);
@@ -262,6 +288,18 @@ public class BlackLevelActivity extends Activity {
 			}
 		});
 
+	}
+
+	@Override
+	public void onVideoFrame(byte[] frameData) {
+		showPreview(frameData);
+	}
+
+	@Override
+	public void onDecodeComplete(String decodeDataString, int symbology,
+			int length) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
