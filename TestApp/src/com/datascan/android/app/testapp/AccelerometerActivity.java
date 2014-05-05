@@ -16,12 +16,19 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+/**
+ * The goal of the activity is to examine the accelerometer, to see if sensor
+ * can reads different values while user move scanner. The activity register
+ * sensor manager and listen to accelerometer, once it reach the threshold, the
+ * test will pass.
+ * @author yue
+ * 
+ */
 public class AccelerometerActivity extends Activity {
 
 	private static final String TAG = LogUtil
 			.makeLogTag(AccelerometerActivity.class);
 
-	boolean accelerometerAvailable = false;
 	private ImageView previewImageView;
 	private Button skipButton, retryButton, failButton, passButton;
 	private TextView displayTextView;
@@ -31,7 +38,7 @@ public class AccelerometerActivity extends Activity {
 	private float x = 0;
 	private float y = 0;
 	private float z = 0;
-	
+
 	private boolean firstRead;
 
 	/** Accuracy configuration */
@@ -43,7 +50,7 @@ public class AccelerometerActivity extends Activity {
 		findUI();
 		setTitle(R.string.title_accelerometer);
 	}
-	
+
 	public void finish() {
 		sensorManager.unregisterListener(sensorEventListener);
 		super.finish();
@@ -55,6 +62,9 @@ public class AccelerometerActivity extends Activity {
 		hint();
 	}
 
+	/**
+	 * register sensor manager and setup listener.
+	 */
 	private void init() {
 		sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 		accelerometerSensor = sensorManager
@@ -65,9 +75,9 @@ public class AccelerometerActivity extends Activity {
 			setResult(MainActivity.RESULT_FAIL);
 			finish();
 		}
-		
-		sensorManager.registerListener(sensorEventListener, accelerometerSensor,
-				SensorManager.SENSOR_DELAY_NORMAL);
+
+		sensorManager.registerListener(sensorEventListener,
+				accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
 	}
 
 	private void hint() {
@@ -111,7 +121,7 @@ public class AccelerometerActivity extends Activity {
 			finish();
 		}
 	}
-	
+
 	/**
 	 * The listener that listen to events from the accelerometer listener
 	 */
@@ -137,8 +147,6 @@ public class AccelerometerActivity extends Activity {
 				y = event.values[1];
 				z = event.values[2];
 
-				// if not interesting in shake events
-				// just remove the whole if then else block
 				if (firstRead) {
 					lastUpdate = now;
 					lastX = x;

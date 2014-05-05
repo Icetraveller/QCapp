@@ -327,7 +327,7 @@ public class ScanHelper implements DecodeCallback, PictureCallback,
 		Log.e(TAG, "onPictureTaken");
 		if (context instanceof BlackLevelActivity) {
 			Log.e(TAG, "I'm a SnapshotActivity");
-			((BlackLevelActivity) context).showPreview(abData);
+			((BlackLevelActivity) context).processVideoFrame(abData);
 			bcr.stopPreview();
 		}
 		state = STATE_IDLE;

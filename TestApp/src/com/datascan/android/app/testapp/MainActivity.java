@@ -19,8 +19,15 @@ import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.TextView;
 
+/**
+ * The home activity of all tests. 
+ * The resonsibilities are: init tests and save the results.
+ * @author yue
+ *
+ */
 public class MainActivity extends Activity {
 	
+	//load important libs
 	static {
 		System.loadLibrary("IAL");
 		System.loadLibrary("SDL");
@@ -52,11 +59,11 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		init();
+		init(); //init do-test and pass-test entries.
 		resultTextView = (TextView) findViewById(R.id.result);
 		Log.e(TAG, "" + PreferenceHelper.isTesting(this));
-		if (PreferenceHelper.isTesting(this)) {
-			Log.e(TAG, "load");
+		if (PreferenceHelper.isTesting(this)) { //check if test is on going.
+			Log.e(TAG, "load test saves");
 			String report = SaveHelper.loadReport();
 			resultTextView.setText(report);
 			SparseBooleanArray savedDoTest = SaveHelper.loadSavedDoTest();
@@ -86,6 +93,9 @@ public class MainActivity extends Activity {
 
 	}
 
+	/**
+	 * Keep screen on.
+	 */
 	private void unlockScreenAndKeepOn() {
 		getWindow().addFlags(
 				android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -100,9 +110,10 @@ public class MainActivity extends Activity {
 	}
 
 	@Override
+	
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.action_deletefiles:
+		case R.id.action_deletefiles: //Delete all saved files manually
 			PreferenceHelper.setTesting(this, false);
 			SaveHelper.deleteFiles();
 			return true;
@@ -110,6 +121,7 @@ public class MainActivity extends Activity {
 		return false;
 	}
 
+	//Update test result displayed on screen.
 	private void updateResult() {
 		StringBuilder sb = new StringBuilder();
 		int key = 0;
@@ -169,8 +181,7 @@ public class MainActivity extends Activity {
 
 	/**
 	 * Test process will pick a test from top list until it's mark skipped or
-	 * failed. When rtc is reached, all reports and status should be save on sd
-	 * card.
+	 * failed. 
 	 */
 	public void testProcess() {
 		// for test only

@@ -1,5 +1,10 @@
 package com.datascan.android.app.testapp.util;
 
+/**
+ * Trying to make log easier and more clear.
+ * @author yue
+ *
+ */
 public class LogUtil {
 	
 	private static final String LOG_PREFIX = "QCTest_";

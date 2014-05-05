@@ -16,6 +16,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+/**
+ * The goal of the activity is to examine whether the light sensor can reads
+ * different values when environment light changed by user.
+ * 
+ * @author yue
+ * 
+ */
 public class LightActivity extends Activity {
 
 	private static final String TAG = LogUtil.makeLogTag(LightActivity.class);
@@ -33,18 +40,18 @@ public class LightActivity extends Activity {
 
 		@Override
 		public void onAccuracyChanged(Sensor sensor, int accuracy) {
-			// TODO Auto-generated method stub
+			// not used
 		}
 
 		@Override
 		public void onSensorChanged(SensorEvent event) {
 			if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
-				if (firstRead) {
+				if (firstRead) { // read value on first time entered.
 					initLightValue = event.values[0];
 					firstRead = false;
-					if(initLightValue == 0){
+					if (initLightValue == 0) {
 						displayTextView.setText(R.string.hint_light_light);
-					}else{
+					} else {
 						displayTextView.setText(R.string.hint_light_dark);
 					}
 				} else {
@@ -83,11 +90,11 @@ public class LightActivity extends Activity {
 	private void init() {
 		sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 		lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
-		//sensor is not available
-				if (lightSensor == null) {
-					setResult(MainActivity.RESULT_FAIL);
-					finish();
-				}
+		// sensor is not available
+		if (lightSensor == null) {
+			setResult(MainActivity.RESULT_FAIL);
+			finish();
+		}
 		sensorManager.registerListener(lightSensorEventListener, lightSensor,
 				SensorManager.SENSOR_DELAY_NORMAL);
 	}

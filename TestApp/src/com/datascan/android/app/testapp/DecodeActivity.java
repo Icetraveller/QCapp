@@ -19,7 +19,15 @@ import com.datascan.android.app.testapp.util.LogUtil;
 import com.datascan.android.app.testapp.util.ScanHelper;
 import com.motorolasolutions.adc.decoder.BarCodeReader;
 
-public class DecodeActivity extends Activity implements ScanHelper.CallBacks{
+/**
+ * The goal of the activity is to check scan engine decode functionality and two
+ * physical scan keys. The activity implemets {@link ScanHelper}.
+ * {@link CallBacks} to received decode callbacks.
+ * 
+ * @author yue
+ * 
+ */
+public class DecodeActivity extends Activity implements ScanHelper.CallBacks {
 
 	private ImageView previewImageView;
 	private Button skipButton, retryButton;
@@ -81,6 +89,10 @@ public class DecodeActivity extends Activity implements ScanHelper.CallBacks{
 		displayTextView = (TextView) findViewById(R.id.display_textview);
 	}
 
+	/**
+	 * start scan process and check which key is under test.
+	 * @param keycode The key that invoke scan process
+	 */
 	public void scan(int keycode) {
 		currentKeyCode = keycode;
 		if (doTopScan && currentKeyCode == KEY_TOP_SCAN) {
@@ -93,8 +105,11 @@ public class DecodeActivity extends Activity implements ScanHelper.CallBacks{
 		}
 	}
 
-	public void showMessage(String msg, int Symbology, int length) {
-		boolean decodePassed = false; // if this scan decodes successfully
+	public void processDecodedData(String msg, int Symbology, int length) {
+		// default test result
+		boolean decodePassed = false; 
+		
+		//check length to make sure it's valid decoded data
 		if (length <= 0) {
 			if (length == BarCodeReader.DECODE_STATUS_MULTI_DEC_COUNT) {
 				return;
@@ -140,17 +155,6 @@ public class DecodeActivity extends Activity implements ScanHelper.CallBacks{
 	}
 
 	private void checkComplete() {
-		// if (!doTopScan && !doBottomScan) {
-		// if (topResult && bottomResult) {
-		// setResult(RESULT_OK);
-		// String resultStr = getString(R.string.passed);
-		// displayTextView.setText(resultStr);
-		// finish();
-		// } else {
-		// setResult(MainActivity.RESULT_FAIL);
-		// final String resultStr = getString(R.string.failed);
-		// displayTextView.setText(resultStr);
-		// }
 
 		if (!doTopScan && !topResult) {
 			doBottomScan = false;
@@ -168,7 +172,6 @@ public class DecodeActivity extends Activity implements ScanHelper.CallBacks{
 			displayTextView.setText(resultStr);
 			finish();
 		}
-		// }
 	}
 
 	public void finish() {
@@ -214,15 +217,15 @@ public class DecodeActivity extends Activity implements ScanHelper.CallBacks{
 
 	@Override
 	public void onVideoFrame(byte[] frameData) {
-		// TODO Auto-generated method stub
-		
+		// ignored, not used
+
 	}
 
 	@Override
 	public void onDecodeComplete(String decodeDataString, int symbology,
 			int length) {
-		showMessage(decodeDataString, length, length);
-		
+		processDecodedData(decodeDataString, length, length);
+
 	}
 
 }

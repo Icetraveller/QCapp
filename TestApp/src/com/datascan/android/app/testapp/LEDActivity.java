@@ -12,16 +12,23 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+/**
+ * The goal of the activity is to flash led in red and green, so that user can
+ * decide whether led is good.
+ * 
+ * @author yue
+ * 
+ */
 public class LEDActivity extends Activity {
-	
+
 	private static final String TAG = LogUtil.makeLogTag(LEDActivity.class);
 
 	private ImageView previewImageView;
-	private Button skipButton, retryButton,failButton, passButton;
+	private Button skipButton, retryButton, failButton, passButton;
 	private TextView displayTextView;
 	private LEDManager lm;
 	private ButtonListener buttonListener = new ButtonListener();
-	
+
 	private boolean flashFlag = true;
 
 	@Override
@@ -47,20 +54,23 @@ public class LEDActivity extends Activity {
 		passButton = (Button) findViewById(R.id.pass_button);
 		failButton = (Button) findViewById(R.id.fail_button);
 		displayTextView = (TextView) findViewById(R.id.display_textview);
-		
+
 		buttonListener = new ButtonListener();
 		skipButton.setOnClickListener(buttonListener);
 		retryButton.setOnClickListener(buttonListener);
 		passButton.setOnClickListener(buttonListener);
 		failButton.setOnClickListener(buttonListener);
 	}
-	
-	private void hint(){
+
+	private void hint() {
 		displayTextView.setText(R.string.hint_led);
 	}
 
+	/**
+	 * Flash led each half second.
+	 */
 	private void flashLED() {
-		lm = (LEDManager) getSystemService("led");
+		lm = (LEDManager) getSystemService("led"); //get system service
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -85,11 +95,11 @@ public class LEDActivity extends Activity {
 			}
 		}).start();
 	}
-	
-	private class ButtonListener implements OnClickListener{
+
+	private class ButtonListener implements OnClickListener {
 		@Override
 		public void onClick(View view) {
-			switch(view.getId()){
+			switch (view.getId()) {
 			case R.id.fail_button:
 				setResult(MainActivity.RESULT_FAIL);
 				break;

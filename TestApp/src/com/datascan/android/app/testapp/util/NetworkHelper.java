@@ -8,7 +8,7 @@ import android.net.wifi.WifiManager;
 import android.util.Log;
 
 /**
- * This class is a helper to modify WiFi, BlueTooth, or other network things
+ * This class is a helper to modify WiFi, BlueTooth, or other network things(if any).
  * 
  * @author yue
  * 
@@ -22,6 +22,7 @@ public class NetworkHelper {
 
 	/**
 	 * The contructor will init the system serivce of wifi and bluetooth
+	 * 
 	 * @param context
 	 */
 	public NetworkHelper(Context context) {
@@ -39,18 +40,22 @@ public class NetworkHelper {
 		bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 	}
 
+	/**
+	 * Get wifi status, regard disable and disabling as disabling. So as enable.
+	 * @return the wifi status.
+	 */
 	public int getWifiStatus() {
 		int state = wifiManager.getWifiState();
-		switch(state){
-			case WifiManager.WIFI_STATE_DISABLED:
-			case WifiManager.WIFI_STATE_DISABLING:
-				return WifiManager.WIFI_STATE_DISABLING;
-			case WifiManager.WIFI_STATE_ENABLED:
-				return WifiManager.WIFI_STATE_ENABLED;
-			case WifiManager.WIFI_STATE_ENABLING:
-				return WifiManager.WIFI_STATE_ENABLING;
-			case WifiManager.WIFI_STATE_UNKNOWN:
-				break;
+		switch (state) {
+		case WifiManager.WIFI_STATE_DISABLED:
+		case WifiManager.WIFI_STATE_DISABLING:
+			return WifiManager.WIFI_STATE_DISABLING;
+		case WifiManager.WIFI_STATE_ENABLED:
+			return WifiManager.WIFI_STATE_ENABLED;
+		case WifiManager.WIFI_STATE_ENABLING:
+			return WifiManager.WIFI_STATE_ENABLING;
+		case WifiManager.WIFI_STATE_UNKNOWN:
+			break;
 		}
 		return WifiManager.WIFI_STATE_UNKNOWN;
 	}
@@ -78,6 +83,10 @@ public class NetworkHelper {
 		return mWifi.isConnected();
 	}
 
+	
+	/**
+	 * ScanWifi
+	 */
 	public void startScanWifi() {
 		wifiManager.startScan();
 		Log.d(TAG, "Scanning");

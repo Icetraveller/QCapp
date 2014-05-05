@@ -1,15 +1,11 @@
 package com.datascan.android.app.testapp;
 
-import java.util.ArrayList;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources.NotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -23,9 +19,9 @@ import com.datascan.android.app.testapp.util.LogUtil;
 import com.datascan.android.app.testapp.util.ScanHelper;
 
 /**
- * In this class we are going to have three shots and an interval time between
- * each. After shot, analyze the bit data to see if there is something wrong
- * with scan engine
+ * The goal of the activity is to examine the scanner by checking last 4 bits of
+ * video frame. The activity implements {@link ScanHelper.CallBacks} and will
+ * receive the first non-empty video frame and do analysis.
  * 
  * @author yue
  * 
@@ -40,9 +36,8 @@ public class BlackLevelActivity extends Activity implements
 	private static final String TAG = LogUtil
 			.makeLogTag(BlackLevelActivity.class);
 
-	private String exitState;
-
-	private boolean enablePress = true;
+	private String exitState; // display current state when exiting.
+	private boolean enablePress = true; // prevent user multi-press
 
 	// Key code
 	private static final int KEY_BOTTOM_SCAN = 190;
@@ -50,15 +45,15 @@ public class BlackLevelActivity extends Activity implements
 
 	private ScanHelper scanHelper;
 
-	private boolean doSnapshotFlag;
-	private static final int PREPARE_TIME = 1000;
 	private boolean inProcess = false;
 
-	private boolean retryFlag;
+	private boolean retryFlag; // whether to do a retry.
 
+	/**
+	 * Reset key state values
+	 */
 	private void resetState() {
 		retryFlag = false;
-		doSnapshotFlag = true;
 		exitState = "";
 	}
 
@@ -77,25 +72,18 @@ public class BlackLevelActivity extends Activity implements
 		super.onResume();
 		scanHelper = new ScanHelper(this);
 		init();
-		// show tutorial
+		// show user hint
 		showHint();
 	}
 
 	private void init() {
 		setDisplayTextView(getString(R.string.initializing));
-		try {
-			Thread.sleep(1000);
-		} catch (Exception e) {
-			e.getMessage();
-		}
 	}
-
-	Bitmap bmSnap;
 
 	private void showHint() {
 		setDisplayTextView(getString(R.string.hint_black_level));
 		try {
-			bmSnap = BitmapFactory.decodeResource(getResources(),
+			Bitmap bmSnap = BitmapFactory.decodeResource(getResources(),
 					R.drawable.hint_blacklevel);
 			if (bmSnap == null) {
 				return;
@@ -109,9 +97,17 @@ public class BlackLevelActivity extends Activity implements
 
 	}
 
+	/**
+	 * 
+	 * @param data
+	 *            int array of {@link Counter}, contain the processed video
+	 *            frame data.
+	 * @return result of test
+	 */
 	private boolean analyze(int[] data) {
 		boolean testResult = true;
 		StringBuilder sb = new StringBuilder();
+		// we only care the last for bits
 		for (int j = 4; j < 8; j++) {
 			if (data[j] == 752 * 480) {
 				testResult = false;
@@ -148,6 +144,12 @@ public class BlackLevelActivity extends Activity implements
 		});
 	}
 
+	/**
+	 * UI Helper
+	 * 
+	 * @param bitmap
+	 *            the image to show on UI thread
+	 */
 	private void setPreivewView(final Bitmap bitmap) {
 		if (bitmap == null) {
 			runOnUiThread(new Runnable() {
@@ -176,7 +178,13 @@ public class BlackLevelActivity extends Activity implements
 		displayTextView = (TextView) findViewById(R.id.display_textview);
 	}
 
-	public void showPreview(byte[] abDataa) {
+	/**
+	 * Called on received video frame data from scan helper. Start a new thread
+	 * to process video frame.
+	 * 
+	 * @param abDataa
+	 */
+	public void processVideoFrame(byte[] abDataa) {
 		final byte[] abData = abDataa;
 		Bitmap bmSnap = BitmapFactory.decodeByteArray(abData, 0, abData.length);
 		Log.e(TAG,
@@ -213,6 +221,9 @@ public class BlackLevelActivity extends Activity implements
 		}
 	}
 
+	/**
+	 * Before finish, release all resource if necessary and check retry flag.
+	 */
 	public void finish() {
 		try {
 			previewImageView = null;
@@ -251,6 +262,13 @@ public class BlackLevelActivity extends Activity implements
 		});
 	}
 
+	/**
+	 * Prepare counter and video frame data.
+	 * 
+	 * @param abData
+	 *            Video frame data
+	 * @return int array of each bit of the frame
+	 */
 	private int[] loadCounter(byte[] abData) {
 		Counter counter = new Counter(abData);
 		counter.count();
@@ -278,29 +296,15 @@ public class BlackLevelActivity extends Activity implements
 		setDisplayTextView(addHint);
 	}
 
-	private void restartHint() {
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				String addHint = getString(R.string.hint_snapshot_restart);
-				setDisplayTextView(addHint);
-			}
-		});
-
-	}
-
 	@Override
 	public void onVideoFrame(byte[] frameData) {
-		showPreview(frameData);
+		processVideoFrame(frameData);
 	}
 
 	@Override
 	public void onDecodeComplete(String decodeDataString, int symbology,
 			int length) {
-		// TODO Auto-generated method stub
-
+		// ignored in this activity
 	}
 
 }

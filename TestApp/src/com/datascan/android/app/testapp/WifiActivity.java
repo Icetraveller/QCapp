@@ -21,6 +21,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+/**
+ * The goal of the activity is to examine wifi module of the scanner by enabling
+ * wifi and getting a non-empty scanned result list.
+ * 
+ * @author yue
+ * 
+ */
 public class WifiActivity extends Activity {
 
 	private static final String TAG = LogUtil.makeLogTag(WifiActivity.class);
@@ -47,9 +54,9 @@ public class WifiActivity extends Activity {
 		setContentView(R.layout.activity_decode);
 		findUI();
 		setTitle(R.string.title_wifi);
-		wifiScanReceiver = new WifiScanReceiver();
+		wifiScanReceiver = new WifiScanReceiver(); // init receiver
 		registerReceiver(wifiScanReceiver, new IntentFilter(
-				"android.net.wifi.SCAN_RESULTS"));
+				"android.net.wifi.SCAN_RESULTS")); // register intent
 	}
 
 	private void findUI() {
@@ -87,37 +94,6 @@ public class WifiActivity extends Activity {
 		});
 	}
 
-//	public void onFinish() {
-//		breakFlag = true;
-//		if (exiting)
-//			return;
-//		new Thread(new Runnable() {
-//			@Override
-//			public void run() {
-//				int count = 3;
-//				exiting = true;
-//				while (count > 0) {
-//					count--;
-//					final int num = count;
-//					try {
-//						Thread.sleep(PREPARE_TIME);
-//						runOnUiThread(new Runnable() {
-//							public void run() {
-//								displayTextView.setText(exitState
-//										+ ", next test coming in " + num);
-//							}
-//						});
-//					} catch (InterruptedException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//						continue;
-//					}
-//				}
-//				finish();
-//			}
-//		}).start();
-//	}
-
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -129,9 +105,10 @@ public class WifiActivity extends Activity {
 			setResult(MainActivity.RESULT_RETRY);
 		}
 		try {
-			unregisterReceiver(wifiScanReceiver);
+			unregisterReceiver(wifiScanReceiver); // unregister receiver
 		} catch (IllegalArgumentException e) {
-			//do nothing
+			// do nothing, because the receiver is not registered or already
+			// been unregistered.
 		}
 		super.finish();
 	}
@@ -145,7 +122,8 @@ public class WifiActivity extends Activity {
 			}
 		});
 	}
-	private void updateDisplay( final String text) {
+
+	private void updateDisplay(final String text) {
 		runOnUiThread(new Runnable() {
 			public void run() {
 				displayTextView.setText(text);
@@ -154,8 +132,11 @@ public class WifiActivity extends Activity {
 	}
 
 	/**
-	 * Start the process of test. The test strategy is: Scanning wifi in an
-	 * environment where there are wifi access point.
+	 * Start the process of test. Assume the scanner is under the environment
+	 * that wifi AP is visible. Strategy is 1)enable wifi(turn on wifi) in a
+	 * limit time. Bad wifi module will encounter problem and unable to turn on
+	 * wifi. 2) scan wifi AP in a limit time. Bad wifi module will not be able
+	 * to get non-empty result list.
 	 */
 	private void startTest() {
 		displayTextView.setText(R.string.processing);
@@ -174,7 +155,7 @@ public class WifiActivity extends Activity {
 						Log.e(TAG, "enable timeout");
 						setResult(MainActivity.RESULT_FAIL);
 						updateDisplay("Fail:\n failed to enable WIFI");
-//						finish();
+						// finish();
 						return;
 					}
 					Log.e(TAG, "see if enabled");
@@ -184,7 +165,7 @@ public class WifiActivity extends Activity {
 						Log.e(TAG, "enable error");
 						setResult(MainActivity.RESULT_FAIL);
 						updateDisplay("Fail:\n unknown WIFI status");
-//						finish();
+						// finish();
 						return;
 					} else if (enabled == WifiManager.WIFI_STATE_ENABLED) { // enabled
 																			// wifi
@@ -212,7 +193,7 @@ public class WifiActivity extends Activity {
 																// timeout
 								setResult(MainActivity.RESULT_FAIL);
 								updateDisplay("Fail:\n Timeout on getting scan result");
-//								finish();
+								// finish();
 								return;
 							}
 							if (getScanResult) { // successfully get result
@@ -231,7 +212,7 @@ public class WifiActivity extends Activity {
 					}
 				}).start();
 			}
-		}).start(); 
+		}).start();
 	}
 
 	private void getResult(boolean result) {
@@ -244,20 +225,23 @@ public class WifiActivity extends Activity {
 			setResult(MainActivity.RESULT_FAIL);
 			exitState = getString(R.string.failed);
 			showRetryButton();
-//			onFinish();
+			// onFinish();
 		}
 	}
 
+	/**
+	 * Wifi scan recevier to receive wifi scan result list from action of
+	 * ScanWifi().
+	 * @author yue
+	 * 
+	 */
 	private class WifiScanReceiver extends BroadcastReceiver {
 		private WifiManager wifiManager;
-		private HashMap<String, String> wifiMap = new HashMap<String, String>();
 
-		private Context context;
 		private static final String TAG = "WifiScanReceiver";
 
 		public void onReceive(Context context, Intent intent) {
 			Log.e(TAG, "WIFI Scan receiver");
-			this.context = context;
 			getScanResult = true;
 			wifiManager = (WifiManager) context
 					.getSystemService(Context.WIFI_SERVICE);
